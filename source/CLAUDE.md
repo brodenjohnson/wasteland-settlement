@@ -21,7 +21,7 @@ Read this file, then `docs/HANDOFF.md` (current state, open questions, the Chapt
 ```
 python3 assemble.py && node --check game_new.js && python3 build.py
 ```
-Or `python3 release.py` to also publish to the repo root. A build that fails `node --check` is broken: read the line it names in `game_new.js`.
+Or `python3 release.py` to also publish to the repo root. On Windows, `python3` may be the Microsoft Store stub: use `python` instead. A build that fails `node --check` is broken: read the line it names in `game_new.js`.
 
 ## Architecture rules that have bitten us
 1. All modules share one scope (the IIFE). A new top-level `const` or `function` can clash with an existing name (we have hit `R`, `pick`, `isFood`-style collisions). `node --check` reports "already declared". Prefix or rename.
@@ -50,7 +50,7 @@ python3 assemble.py && python3 build.py
 python3 tests/run.py regression      # a test passes when its last line is "ERRORS: none"
 python3 tests/run.py t220 t232       # specific tests
 ```
-Tests are small scripts run by `tests/shot.py` with `LEGACY=1` (creates a character, places a bedroll and campfire at the origin, skips the intro). They drive the game through `window.__g`.
+Tests are small scripts run by `tests/shot.py` with `LEGACY=1` (creates a character, places a bedroll and campfire at the origin, skips the intro). They drive the game through `window.__g`. A test that creates its own character goes in `NO_LEGACY` in `tests/run.py`.
 - World clicks need a held mouse (`mouse.down`, wait about 350ms, `mouse.up`), not `click`.
 - Teleport the player to a clear spot before testing (a spot inside an obstacle makes movement tests meaningless).
 - Spawn points only spawn enemies when the player is more than about 260px away. Teleport far first.

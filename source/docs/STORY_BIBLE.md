@@ -39,6 +39,8 @@ Quiet, dry, human. The world is dead but nobody out here is a chosen one. You ar
 
 "Plant the seeds. Keep them alive. They matter more than you do."
 
+(Chapter Three decisions, 2026-11-01, are in `docs/STORY.md`. The case holds the plan below, the Director code and the redacted minutes of the vote.)
+
 The seeds are not only food. Marta's sealed case holds the Long Table, a staged plan to receive the sleepers as the valley grows. The more beds, food, water and defence the settlement has, the more sleepers can be woken safely. The base-building is the answer to the story. Capacity decides the ending.
 
 ## Cast
@@ -90,6 +92,8 @@ The stairs beneath the Ash Tower bunker lead into the Spine, a forty-tile servic
 The antechamber has a wall of lit panels and one console. It reads:
 
 > WAKE QUORUM: 7 OF 11. DIRECTOR PRESENT. BEGIN STAGE ONE? 3,012 SLEEPERS. PROJECTED LOSS: 41 PERCENT.
+
+(Superseded: quorum was set at six of eleven, and the built console reads "WAKE QUORUM 6 OF 11, PROJECTED LOSS ON A PARTIAL WAKE: 41 PERCENT". See Revision 2 and the Tidewrack progress update.)
 
 The player can walk up to it. They cannot press anything yet, because the console wants a Director code you do not remember. Odile says, "Not yet." Then a recording starts, in your voice:
 

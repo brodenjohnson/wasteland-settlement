@@ -3,7 +3,7 @@
 Written at the end of a long design and build session in a claude.ai chat. The new session starts with no memory of that chat. Everything it needs should be in this repo.
 
 ## First message to paste into the new session
-> Read `source/CLAUDE.md`, then `source/docs/HANDOFF.md`, then `source/docs/STORY.md`. Run the build and the regression list so we know the baseline is green. Then summarise where the project stands in ten lines, tell me what you would build for Chapter Three and in what order, and ask me anything you need decided before you start.
+> Read `source/CLAUDE.md`, then `source/docs/HANDOFF.md`, then `source/docs/STORY.md` and `source/docs/STORY_BIBLE.md`. Run the build and the regression list so we know the baseline is green. Then summarise where the project stands in ten lines, tell me what you would build for Chapter Three and in what order, and ask me anything you need decided before you start.
 
 ## State (version 0.9.0)
 Working and tested: character creation and multiple saves, survival, crafting with benches, settlement and settlers with jobs, raids, farming with tiers and irrigation, livestock, weapons and armour with their own art, the dialogue engine with reputation and consequences, the Spine and the Tidewrack (Chapter Two), the Kind Stranger mission and the Kingpin, the Hollowclaw and Deepcut, three extra dungeons, the Hull town (37 residents with schedules, 10 vendors, clinic, inn, job board).
@@ -16,7 +16,10 @@ Baseline: the regression list in `tests/run.py` passes (a test passes when its l
 - Claude may reorder the roadmap and overrule suggestions, and says why.
 - Prefers that Claude decides and builds, then explains plainly what it did and did not do.
 
-## Chapter Three: starting plan (a proposal, not approved)
+## Chapter Three: approved 2026-11-01
+The questions below were answered and the build order approved. The decisions are in `docs/STORY.md` under Chapter 3, and they override the proposal that follows. In short: the case holds the plan, the Director code and the redacted vote minutes; the Cantor is a debate or a fight; a capacity readout is built early; settlers cannot die unless a setting allows it; the Hull gets one document. Save export and import comes first.
+
+### The original proposal
 The Tidewrack console ends Chapter Two with the player's own recording: "Go home. Ask Marta what is in the case. She will pretend not to know. She knows."
 1. **Marta.** She lives in the greenhouse in the Wastes. Her case was labelled in the player's hand ("Not for eating. Not yet."). She never opened it. A conversation with branching and Memory checks. The player chooses whether to open it.
 2. **The case.** Proposal: the minutes of the Long Table (the vote on who sleeps and who does not) plus something that makes the Director override possible. This is where the player learns what they signed.
