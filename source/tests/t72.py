@@ -1,0 +1,11 @@
+import json
+ev = lambda s: pg.evaluate(s)
+ev('__g.state.spawnPts.forEach(s => { s.e = null; s.respawnAt = 1e9 }); __g.enemies.length = 0')
+ev('__g.state.title = false'); ev('__g.state.qflags.storyInit = true; __g.state.qflags.sitesPlaced = true; __g.state.qflags["read:Folded Note"] = true')
+ev('__g.state.player.x = 20*16; __g.state.player.y = 94*16'); pg.wait_for_timeout(500)
+def px(): return ev('Math.round(__g.state.player.x*10)/10')
+print('menu open?', ev('__g.anyMenuOpen()'), '| reading', ev('__g.state.reading'), '| faint', ev('!!__g.state.faint'), '| intro', ev('!!__g.state.intro'))
+x0 = px(); pg.keyboard.down('d'); pg.wait_for_timeout(1000); x1 = px(); pg.keyboard.up('d'); print('walk 1s:', x1 - x0)
+pg.wait_for_timeout(300)
+x2 = px(); pg.keyboard.down('d'); pg.keyboard.down('Shift'); pg.wait_for_timeout(1000)
+x3 = px(); sp = ev('__g.state.sprinting'); st = ev('Math.round(__g.state.player.stamina)'); pg.keyboard.up('Shift'); pg.keyboard.up('d'); print('sprint 1s:', x3 - x2, '| sprinting', sp, '| stamina', st)

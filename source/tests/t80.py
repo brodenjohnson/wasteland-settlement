@@ -1,0 +1,35 @@
+import json
+ev = lambda s: pg.evaluate(s)
+def shot(n): pg.screenshot(path='out/%s.png' % n)
+ev('__g.state.title = false')
+ev('__g.state.spawnPts.forEach(s => { s.e = null; s.respawnAt = 1e9 }); __g.enemies.length = 0')
+pg.wait_for_timeout(6500)
+print('reader open after intro:', ev('__g.state.reading'), '| paused menu:', ev('__g.state.pauseOpen'))
+shot('st_note')
+pg.keyboard.press('Escape'); pg.wait_for_timeout(400)
+print('note read flag:', ev('!!__g.state.qflags["read:Folded Note"]'), '| quests:', ev('JSON.stringify(Object.keys(__g.state.quests))'))
+def read(name):
+    ev('__g.state.reading = "%s"' % name); pg.wait_for_timeout(200); shot('st_read_' + name.replace(' ', '_')); pg.keyboard.press('Escape'); pg.wait_for_timeout(250)
+def qstate(): return ev('JSON.stringify(Object.fromEntries(Object.entries(__g.state.quests).map(([k,v])=>[k,v.status+" "+Object.keys(v.done).filter(s=>v.done[s]).join("+")])))')
+print('after the note:', qstate())
+for key in ['depot', 'pump', 'bunker']:
+    site = json.loads(ev('JSON.stringify({tile: __g.SITE_DEFS.%s.tile, pos: __g.sitePos("%s")})' % (key, key)))
+    tx, ty = site['tile'] % 128, site['tile'] // 128
+    ev('__g.enemies.length = 0; __g.state.player.x = (%d + 0.5) * 16; __g.state.player.y = (%d + 1.6) * 16' % (tx, ty))
+    pg.wait_for_timeout(500)
+    print('--', key, 'crate at', (tx, ty), 'tracker target:', ev('JSON.stringify(__g.state.pinned)'), '| quests:', qstate())
+    x, y = 550, 350 - 1.1 * 4 * 16
+    pg.mouse.move(x, y); pg.wait_for_timeout(120)
+    for _ in range(2):
+        pg.mouse.move(x, y); pg.wait_for_timeout(100); pg.mouse.down(); pg.wait_for_timeout(450); pg.mouse.up(); pg.wait_for_timeout(300)
+    print('   crate open?', ev('__g.objs[%d] === 0' % site['tile']), '| toast:', ev('__g.state.msg'), '| quests:', qstate())
+    docs = ev('JSON.stringify(__g.state.drops.map(d => d.name))'); print('   drops:', docs)
+    pg.wait_for_timeout(1500)
+    bag = ev('JSON.stringify(__g.state.player.inventory.filter(s=>s&&/Slip|Ledger|Tape|Tag|Note/.test(s.name)).map(s=>s.name))')
+    print('   story items in bag:', bag)
+    if key == 'depot': pg.wait_for_timeout(300)
+    if key == 'depot': read('Dispatch Slip')
+    if key == 'pump': read('Pump Ledger')
+    if key == 'bunker': read('Signal Tape')
+    print('   after reading:', qstate())
+shot('st_final'); print('flags:', ev('JSON.stringify(__g.state.qflags)'))

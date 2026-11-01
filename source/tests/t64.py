@@ -1,0 +1,10 @@
+import json
+ev = lambda s: pg.evaluate(s)
+def shot(n): pg.screenshot(path='out/%s.png' % n)
+ev('__g.state.title = false')
+ev('__g.state.spawnPts.forEach(s => { s.e = null; s.respawnAt = 1e9 }); __g.enemies.length = 0')
+ev('__g.state.player.x = 40*16; __g.state.player.y = 80*16'); pg.wait_for_timeout(300)
+print('spawn result:', ev('__g.spawnEncounter("merchant")'), '| npcs:', ev('JSON.stringify(__g.encNpcs.map(n=>[n.kind,n.name]))'))
+ev('__g.openTrade(__g.encNpcs.find(n=>n.kind==="merchant"))'); pg.wait_for_timeout(400)
+print('trade open:', ev('!!__g.state.trade'), '| paused menu:', ev('__g.anyMenuOpen()'))
+shot('s_trade2')

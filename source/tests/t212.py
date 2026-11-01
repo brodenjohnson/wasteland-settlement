@@ -1,0 +1,26 @@
+import json
+ev = lambda s: pg.evaluate(s)
+def shot(n): pg.screenshot(path='out/%s.png' % n)
+ev('__g.state.placing = null; __g.enemies.length = 0; __g.state.spawnPts.forEach(s => { s.e = null; s.respawnAt = 1e9 })')
+spot = json.loads(ev('''JSON.stringify((()=>{ for (let r=0;r<60;r++) for (let dy=-r;dy<=r;dy++) for (let dx=-r;dx<=r;dx++){ const x=(60+dx)*16+8, y=(60+dy)*16+8; let ok=true; for (let k=-6;k<=6;k++) for (let j=-4;j<=4;j++) if (__g.collides(x+k*16, y+j*16, 10, true)) ok=false; if (ok) return [x,y]; } })())'''))
+tx, ty = int(spot[0] // 16), int(spot[1] // 16)
+ev('__g.state.player.x = %d; __g.state.player.y = %d' % tuple(spot))
+S = lambda t, dx, dy: ev('__g.structs.set(%d*128+%d, __g.newStruct("%s"))' % (ty + dy, tx + dx, t))
+S('weaponbench', -3, -2); S('armourbench', 3, -2); S('skullpike', -5, 0); S('skullpike', -5, 2);  S('barrelfire', 5, 1); S('banner', -3, 2); S('tyrewall', 2, 3); S('tyrewall', 3, 3); S('tyrewall', 4, 3)
+ev('__g.structs.set(98*128+30, __g.newStruct("skullpike")); __g.structs.set(98*128+32, __g.newStruct("skullpike"))')
+print('stations in reach:', ev('[__g.stationNear("weaponbench"), __g.stationNear("armourbench")]'))
+print('recipes using the new benches:', ev('JSON.stringify(__g.RECIPES.reduce((a,r)=>(["weaponbench","armourbench"].includes(r.station)&&(a[r.station]=(a[r.station]||0)+1),a),{}))'))
+print('craftable now (all costs met):')
+ev('Object.entries({Scrap:200,Wood:60,Cloth:60,"Metal plate":60,"Human Skull":10}).forEach(([k,v])=>__g.addItem(k,v)); __g.skillXp("crafting",99999); __g.skillXp("combat",99999)')
+print(' ', ev('JSON.stringify(__g.RECIPES.filter(r=>["weaponbench","armourbench"].includes(r.station)).slice(0,6).map(r=>r.name+":"+(__g.canCraft?__g.canCraft(r):"?")))'))
+# skulls
+ev('(()=>{ const r = Math.random; Math.random = () => 0; const e = __g.spawnEnemy("gunner", %d, %d, {}); __g.killEnemy(e); Math.random = r; })()' % (spot[0] + 60, spot[1]))
+print('skull dropped from a gunner:', ev('__g.state.drops.some(d=>d.name==="Human Skull")'), '| pikes counted:', ev('__g.pikeCount()'))
+hp = lambda: ev('(()=>{ const e = __g.spawnEnemy("scrapper", 100, 100, {}); e.raid = true; __g.updateEnemies(0.01); const h = e.hp; __g.enemies.splice(__g.enemies.indexOf(e), 1); return h; })()')
+print('raider hp with 2 pikes up:', hp())
+# wear a set and hold a weapon
+for n in ('Skull Helm', 'Bone Harness', 'Spiked Leggings', 'Bone Boots'):
+    ev('__g.addItem("%s", 1)' % n)
+ev('(()=>{ const p = __g.state.player; for (const n of ["Skull Helm","Bone Harness","Spiked Leggings","Bone Boots"]) { const slot = __g.ARMOUR[n].slot; p.equip[slot] = {name:n, qty:1}; } })()')
+ev('__g.addItem("Skull Mace", 1)'); mi = ev('__g.state.player.inventory.findIndex(s=>s&&s.name==="Skull Mace")'); pg.keyboard.press(str(mi + 1))
+pg.mouse.move(700, 330); pg.wait_for_timeout(700); shot('a_world')

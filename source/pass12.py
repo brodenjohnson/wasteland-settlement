@@ -1,0 +1,10 @@
+# ---- pass 12: map engine ----
+sub1("  ctx.setTransform(1, 0, 0, 1, 0, 0);\n  ctx.drawImage(lightCv, 0, 0);\n  ctx.globalCompositeOperation = 'lighter';", "  for (const L of MAP_LIGHTS) hole(L.x * scale - transX, L.y * scale - transY, L.r * scale, 0.9);\n  ctx.setTransform(1, 0, 0, 1, 0, 0);\n  ctx.drawImage(lightCv, 0, 0);\n  ctx.globalCompositeOperation = 'lighter';")
+sub1("drawLighting(transX, transY, Math.max(darkness(clockHour()), state.zDark));", "drawLighting(transX, transY, Math.max(state.map === 'wastes' ? darkness(clockHour()) : 0, state.zDark, curDark()));")
+sub1("  if (floors[i]) drawFloorTile(i, tx, ty);\n  const rr = radMap[i];", "  if (floors[i]) drawFloorTile(i, tx, ty);\n  if (INTERACT.size && INTERACT.has(i)) drawInteract(i, tx, ty, time);\n  const rr = radMap[i];")
+sub1("  const c = state.corpse;\n", "  const c = corpseHere() ? state.corpse : null;\n")
+sub1("  if (state.corpse) drawCorpse(state.corpse, state.elapsed);", "  if (corpseHere()) drawCorpse(state.corpse, state.elapsed);")
+sub1("  if (state.corpse) { ctx.fillStyle = '#e8003d'; ctx.fillRect(px + 6 + state.corpse.x * k - 3, py + 6 + state.corpse.y * k - 3, 6, 6); }", "  if (corpseHere()) { ctx.fillStyle = '#e8003d'; ctx.fillRect(px + 6 + state.corpse.x * k - 3, py + 6 + state.corpse.y * k - 3, 6, 6); }")
+sub1("  if (state.corpse) { ctx.fillStyle = '#e8003d'; ctx.fillRect(mx + state.corpse.x / (W * TS) * MS - 1.5, my + state.corpse.y / (H * TS) * MS - 1.5, 3, 3); }", "  if (corpseHere()) { ctx.fillStyle = '#e8003d'; ctx.fillRect(mx + state.corpse.x / (W * TS) * MS - 1.5, my + state.corpse.y / (H * TS) * MS - 1.5, 3, 3); }")
+sub1("  label('Home Valley', ORIGIN.x, ORIGIN.y);", "  if (state.map === 'wastes') label('Home Valley', ORIGIN.x, ORIGIN.y); else label(mapName(), W / 2, 8);")
+src = src.replace(marker_end, P('z_maps.js') + marker_end, 1)

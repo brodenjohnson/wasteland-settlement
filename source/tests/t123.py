@@ -1,0 +1,33 @@
+import json
+ev = lambda s: pg.evaluate(s)
+def shot(n): pg.screenshot(path='out/%s.png' % n)
+pg.wait_for_timeout(1500)
+ev('__g.newCharacter()'); pg.wait_for_timeout(300)
+ev('__g.state.creating.name = "Mapper"; __g.beginGame()'); pg.wait_for_timeout(1000)
+ev('Object.assign(__g.state.qflags, {storyInit:true, sitesPlaced:true, spawnVar:true, chapterOne:true, "read:Folded Note":true}); __g.state.intro = null; __g.state.reading = null; __g.state.placing = null')
+ev('__g.state.spawnPts.forEach(s => { s.e = null; s.respawnAt = 1e9 }); __g.enemies.length = 0')
+ev('__g.addItem("Wood", 27)')
+ev('__g.enterMap("spine", -1, -1)'); pg.wait_for_timeout(2600)
+print('entered at', ev('JSON.stringify([Math.floor(__g.state.player.x/16), Math.floor(__g.state.player.y/16)])'), '| on floor?', ev('__g.tiles[Math.floor(__g.state.player.y/16)*128+Math.floor(__g.state.player.x/16)] === 8'))
+relays = json.loads(ev('JSON.stringify([...__g.INTERACT.entries()].filter(([i,it])=>it.kind==="relay").map(([i,it])=>i))'))
+for i in relays[:2]: ev('__g.useInteract(__g.INTERACT.get(%d), %d)' % (i, i))
+# kill the first enemy that exists so its spawn point is marked dead
+ev('(()=>{ const e = __g.enemies[0]; if (e) __g.damageEnemy(e, 9999, 0, 0, 0); })()'); pg.wait_for_timeout(400)
+deadBefore = ev('__g.state.spawnPts.filter(s=>s.respawnAt>1e11).length')
+ev('__g.state.player.x += 90; __g.state.player.y = __g.state.player.y')
+ev('__g.doSave("1", true)'); pg.wait_for_timeout(2000)
+print('saved in the Spine | relays', ev('__g.state.mapFlags.spine.relays'), '| dead spawn points', deadBefore, '| player x', round(ev('__g.state.player.x')))
+px = ev('__g.state.player.x')
+pg.reload(); pg.wait_for_timeout(2500)
+cid = ev('__g.state.chars[0].id')
+ev('__g.loadSlot("%s", "1")' % cid); pg.wait_for_timeout(3500)
+print('after reload and load: map', ev('__g.state.map'), '| relays', ev('JSON.stringify(__g.state.mapFlags.spine)'), '| lights', ev('__g.MAP_LIGHTS.length'), '| dead spawn points', ev('__g.state.spawnPts.filter(s=>s.respawnAt>1e11).length'), '| player x', round(ev('__g.state.player.x')), '(was %d)' % round(px), '| wood in bag', ev('__g.countItem("Wood")'))
+shot('m_loaded_spine')
+# go home and check the overworld is the overworld
+up = json.loads(ev('JSON.stringify([...__g.INTERACT.entries()].find(([i,it])=>it.up).slice(0,1))'))[0]
+ev('__g.state.player.x = %d*16 + 8; __g.state.player.y = (%d+1)*16' % (up % 128, up // 128)); ev('__g.useInteract(__g.INTERACT.get(%d), %d)' % (up, up)); pg.wait_for_timeout(2600)
+print('home:', ev('__g.state.map'), '| tower stairs restored:', ev('JSON.stringify(__g.state.towerPortal)'), '| floor tiles (ruins) present:', ev('Array.from(__g.tiles).filter(t=>t===8).length > 100'))
+# death in the Spine
+ev('__g.enterMap("spine", -1, -1)'); pg.wait_for_timeout(2600)
+ev('__g.state.player.health = 0.1; __g.state.player.radiation = 100'); pg.wait_for_timeout(2500)
+print('after dying in the Spine: map', ev('__g.state.map'), '| corpse map', ev('__g.state.corpse && __g.state.corpse.map'), '| corpse visible here:', ev('__g.corpseHere()'))

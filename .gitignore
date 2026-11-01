@@ -1,0 +1,7 @@
+.DS_Store
+Thumbs.db
+*.log
+source/game_new.js
+source/game_new.html
+source/out/
+__pycache__/

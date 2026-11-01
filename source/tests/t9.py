@@ -1,0 +1,10 @@
+import json
+ev = lambda s: pg.evaluate(s)
+pg.keyboard.press('g'); pg.keyboard.press('u'); pg.wait_for_timeout(100)
+ev('__g.structs.set(30*60+34, {type:"workbench", hp:120}); __g.structs.set(31*60+34, {type:"forge", hp:160}); __g.state.player.cloth = 0')
+pg.keyboard.press('c'); pg.wait_for_timeout(200)
+rects = json.loads(ev('JSON.stringify(__g.state.uiRects)'))
+r = rects[3]; pg.mouse.click(r['x'] + r['w']/2, r['y'] + r['h']/2); pg.wait_for_timeout(150)
+pg.mouse.move(550, 300); pg.mouse.wheel(0, 200); pg.wait_for_timeout(200)
+print('scroll', ev('__g.state.craftScroll'), 'tab', ev('__g.state.craftTab'))
+pg.screenshot(path='out/armour_tab.png')

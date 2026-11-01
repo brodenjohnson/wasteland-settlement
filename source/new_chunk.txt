@@ -1,0 +1,11 @@
+    const CS = 29, cols = Math.floor(tw / CS);
+    list.forEach((r, k) => {
+      const x = tx0 + (k % cols) * CS, y2 = ty + Math.floor(k / cols) * CS, un = recipeUnlocked(r);
+      const over = mouse.x >= x && mouse.x < x + CS - 3 && mouse.y >= y2 && mouse.y < y2 + CS - 3;
+      ctx.fillStyle = un ? 'rgba(127,255,127,0.1)' : 'rgba(255,255,255,0.04)'; ctx.fillRect(x, y2, CS - 3, CS - 3);
+      ctx.strokeStyle = over ? '#ffffff' : un ? 'rgba(127,255,127,0.4)' : 'rgba(233,226,212,0.15)'; ctx.strokeRect(x + 0.5, y2 + 0.5, CS - 4, CS - 4);
+      ctx.globalAlpha = un ? 1 : 0.35; drawRecipeIcon(r, x + 3, y2 + 3, CS - 9); ctx.globalAlpha = 1;
+      if (!un) { ctx.fillStyle = '#d6a84a'; ctx.font = '9px ' + MONO; ctx.textAlign = 'right'; ctx.fillText('?', x + CS - 5, y2 + CS - 8); }
+      if (over) { hover = r; hx = x + CS; hy = y2; }
+    });
+    ty += Math.ceil(list.length / cols) * CS + 10;

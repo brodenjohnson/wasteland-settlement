@@ -1,0 +1,20 @@
+import json
+ev = lambda s: pg.evaluate(s)
+def shot(n): pg.screenshot(path='out/%s.png' % n)
+ev('Object.assign(__g.state.qflags, {chapterOne: true})')
+ev('__g.state.spawnPts.forEach(s => { s.e = null; s.respawnAt = 1e9 }); __g.enemies.length = 0')
+tp = json.loads(ev('JSON.stringify(__g.state.towerPortal)'))
+before = json.loads(ev('JSON.stringify({objs: Array.from(__g.objs).filter(Boolean).length, structs: __g.structs.size, settlers: __g.settlers.length})'))
+print('overworld before:', before)
+
+ev('__g.state.placing = null'); pg.keyboard.press('3')
+ev('__g.state.player.x = (%d + 0.5) * 16; __g.state.player.y = (%d + 1.6) * 16' % (tp['x'], tp['y'])); pg.wait_for_timeout(500)
+x, y = 550, 350 - 1.1 * 64
+pg.mouse.move(x, y); pg.wait_for_timeout(200)
+print('hover label:', ev('__g.state.hoverLabel || null'))
+pg.mouse.down(); pg.wait_for_timeout(350); pg.mouse.up(); pg.wait_for_timeout(300)
+print('transition started:', ev('!!__g.state.transition'))
+pg.wait_for_timeout(2800)
+print('now in map:', ev('__g.state.map'), '| zone name:', ev('__g.mapName()'), '| tiles floor count:', ev('Array.from(__g.tiles).filter(t=>t===8).length'), '| spawn points:', ev('__g.state.spawnPts.length'), '| interact:', ev('__g.INTERACT.size'))
+pg.wait_for_timeout(1500); shot('m_spine1')
+print('player at tile:', ev('JSON.stringify([Math.floor(__g.state.player.x/16), Math.floor(__g.state.player.y/16)])'), '| enemies spawned:', ev('__g.enemies.length'))

@@ -1,0 +1,10 @@
+import json
+ev = lambda s: pg.evaluate(s)
+W = json.loads(ev('JSON.stringify(Object.fromEntries(Object.entries(__g.WEAPONS).filter(([k,w])=>w.kind==="melee"||w.kind==="gun").map(([k,w])=>[k,[w.kind,w.dmg,w.cd]])))'))
+print('weapons (kind, dmg, cooldown):'); print(' ', W)
+A = json.loads(ev('JSON.stringify(Object.fromEntries(Object.entries(__g.ARMOUR).filter(([k,a])=>a.slot==="body").map(([k,a])=>[k,a.dmg])))'))
+print('body armour damage reduction:', A)
+E = json.loads(ev('JSON.stringify(Object.fromEntries(Object.entries(__g.ENEMY_TYPES).map(([k,e])=>[k,[e.hp,e.dmg,e.atkCd,e.xp]])))'))
+print('enemy base (hp, dmg, atkCd, xp):'); print(' ', E)
+print('level cap:', ev('__g.CONFIG.combat.maxLevel'), '| hp/level', ev('__g.CONFIG.combat.hpPerLevel'), '| xp to next at L1/L5/L9:', ev('[__g.xpNeeded(1), __g.xpNeeded(5), __g.xpNeeded(9)]'))
+print('difficulty multipliers:', ev('JSON.stringify(__g.DIFFS || null)'))

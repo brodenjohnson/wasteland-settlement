@@ -1,0 +1,15 @@
+# ---- pass 16: polish ----
+sub1("structs.set(i, newStruct(r.place, state.placeRot)); if (r.place === 'bedroll')", "structs.set(i, newStruct(r.place, autoRot(r.place, tx, ty, state.placeRot))); if (r.place === 'bedroll')")
+sub1("    st.rot = state.placeRot; structs.set(i, st);", "    st.rot = autoRot(st.type, tx, ty, state.placeRot); structs.set(i, st);")
+sub1("  else drawStruct({ type: r.place, rot: state.placeRot }, tx, ty);", "  else drawStruct({ type: r.place, rot: autoRot(r.place, tx, ty, state.placeRot) }, tx, ty);")
+sub1("        if (settlerGo(s, gx, gy, dt, 46)) { const got = chestTake(food, 1);", "        if (settlerGo(s, gx, gy, dt, 46)) { s.eatT = (s.eatT === undefined ? 1.6 : s.eatT) - dt; s.eating = food; if (s.eatT > 0) continue; s.eatT = undefined; s.eating = null; const got = chestTake(food, 1);")
+sub1("    if (wet[i]) { state.actCd = 0.15; return; }\n    sel.water -= 1; wet[i] = 1; skillXp('farming', 0.4); state.actCd = F.waterCd;\n    state.swing = { t: 0, dur: 0.2, tool: 'can', tier: 1 };\n    burst(cx, cy, '#7ac8ff', 6);", "    if (wet[i] && (CAN_DEF[sel.name] || CAN_DEF['Watering Can']).area === 1) { state.actCd = 0.15; return; }\n    waterArea(sel, tx, ty); state.actCd = F.waterCd;")
+sub1("((s.water || 0) / CONFIG.farm.canCapacity)", "((s.water || 0) / canCap(s))")
+sub1("rows.push({ k: 'Capacity', v: CONFIG.farm.canCapacity, max: 40,", "rows.push({ k: 'Capacity', v: (CAN_DEF[name] || CAN_DEF['Watering Can']).cap, max: 90,")
+sub1("    const d = ENEMY_TYPES[e.type];\n    let dpx = p.x - e.x,", "    const d = scaledStats(e);\n    let dpx = p.x - e.x,")
+sub1("settings.grim ? 'On' : 'Off', () => { settings.grim = !settings.grim; saveSettings(); }, !!settings.grim); y += 42;", "settings.grim ? 'On' : 'Off', () => { settings.grim = !settings.grim; saveSettings(); }, !!settings.grim); y += 42;\n  toggleRow(x, y, rw, 'Text size', 'Makes everything easier to read.', ({ 1: 'Normal', 1.2: 'Large', 1.4: 'Larger' })[settings.textScale] || 'Large', () => { settings.textScale = settings.textScale >= 1.4 ? 1 : settings.textScale >= 1.2 ? 1.4 : 1.2; saveSettings(); }, true); y += 42;")
+sub1("const pw = 560, ph = 640, px = Math.round(w / 2 - pw / 2), py = Math.max(8, Math.round(h / 2 - ph / 2));", "const pw = 560, ph = 690, px = Math.round(w / 2 - pw / 2), py = Math.max(4, Math.round(h / 2 - ph / 2));")
+sub1("replace(/^Steel /, 'Iron ')", "replace(/^Steel /, 'Iron ')") if False else None
+sub1("state.pins.includes(sel.id));\n    y += 54;", "state.pins.includes(sel.id)); ctx.textAlign = 'left'; ctx.textBaseline = 'middle';\n    y += 54;")
+sub1("(X to deconstruct)", "(F move, X remove)")
+src = src.replace(marker_end, P('ad_polish.js') + P('ae_world.js') + marker_end, 1)

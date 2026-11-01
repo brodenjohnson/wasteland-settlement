@@ -1,0 +1,12 @@
+import json
+ev = lambda s: pg.evaluate(s)
+pg.wait_for_timeout(1500)
+ev('__g.newCharacter()'); pg.wait_for_timeout(300); ev('__g.state.creating.name = "Chooser"; __g.beginGame()'); pg.wait_for_timeout(1000)
+ev('Object.assign(__g.state.qflags, {storyInit:true, sitesPlaced:true, spawnVar:true, "read:Folded Note":true}); __g.state.intro = null; __g.state.reading = null')
+ev('__g.repAdd("mercy", 3); __g.repAdd("trust", -2); __g.state.choiceLog.push({day: 2, text: "Test choice"}); __g.state.qflags["lied_marta"] = true')
+ev('__g.doSave("1", true)'); pg.wait_for_timeout(1800)
+pg.reload(); pg.wait_for_timeout(2500)
+cid = ev('__g.state.chars[0].id'); ev('__g.loadSlot("%s", "1")' % cid); pg.wait_for_timeout(3000)
+print('after load: rep', ev('JSON.stringify(__g.state.rep)'), '| log', ev('JSON.stringify(__g.state.choiceLog)'), '| flag', ev('!!__g.state.qflags.lied_marta'))
+ev('__g.state.journalOpen = true; __g.state.journalPage = 2'); pg.wait_for_timeout(500)
+pg.screenshot(path='out/d_journal_q.png')

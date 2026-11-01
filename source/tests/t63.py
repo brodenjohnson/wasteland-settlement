@@ -1,0 +1,25 @@
+import json
+ev = lambda s: pg.evaluate(s)
+BX, BY = 28, 98
+def shot(n): pg.screenshot(path='out/%s.png' % n)
+ev('__g.state.title = false')
+ev('__g.state.spawnPts.forEach(s => { s.e = null; s.respawnAt = 1e9 }); __g.enemies.length = 0')
+ev('__g.state.player.x=(%d+0.5)*16; __g.state.player.y=(%d+0.5)*16' % (BX, BY))
+for a in range(3): ev('__g.structs.set(%d*128+%d, {type:"bunk", hp:90, rot:0, owner:null})' % (BY + 2, BX - 4 + a * 2))
+ev('__g.structs.set(%d*128+%d, {type:"chest", hp:90, rot:0, slots:new Array(27).fill(null)})' % (BY - 2, BX + 2))
+for i in range(2): ev('(()=>{ const s=__g.survivors.filter(q=>!q.wounded)[0]; __g.recruit(s); })()')
+ev('__g.settlers[0].job = "Fisher"; __g.settlers[1].job = "Farmer"; __g.settlers.forEach(s => { s.state = "home"; s.x = %d*16; s.y = (%d-1)*16 })' % (BX, BY))
+pg.wait_for_timeout(5000)
+pg.keyboard.press('b'); pg.wait_for_timeout(500); shot('s_settlement')
+pg.keyboard.press('Escape'); pg.wait_for_timeout(200)
+ev('__g.spawnEncounter("merchant")'); pg.wait_for_timeout(300)
+ev('__g.openTrade(__g.encNpcs[0])'); pg.wait_for_timeout(400); shot('s_trade')
+pg.keyboard.press('Escape'); pg.wait_for_timeout(200)
+# fishing at the valley pond
+pond = ev('(()=>{ for(let y=%d-12;y<=%d+4;y++) for(let x=%d;x<=%d+16;x++){ if(__g.tiles[y*128+x]===6) return [x,y]; } return null; })()' % (BY, BY, BX, BX))
+ev('__g.addItem("Fishing Rod", 1)'); ri = ev('__g.state.player.inventory.findIndex(s=>s&&s.name==="Fishing Rod")'); pg.keyboard.press(str(ri + 1))
+ev('__g.state.player.x=(%d+0.5)*16; __g.state.player.y=(%d+3.5)*16' % (pond[0], pond[1]))
+pg.wait_for_timeout(200)
+sx, sy = 550, 350 - 3 * 4 * 16
+pg.mouse.move(sx, sy); pg.wait_for_timeout(100); pg.mouse.click(sx, sy); pg.wait_for_timeout(700); shot('s_fish_wait')
+ev('__g.state.fish && (__g.state.fish.wait = 0.05)'); pg.wait_for_timeout(500); shot('s_fish_bite')

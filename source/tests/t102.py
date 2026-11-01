@@ -1,0 +1,32 @@
+import json
+ev = lambda s: pg.evaluate(s)
+def shot(n): pg.screenshot(path='out/%s.png' % n)
+def prep(): ev('Object.assign(__g.state.qflags, {storyInit:true, sitesPlaced:true, spawnVar:true, "read:Folded Note":true}); __g.state.intro = null; __g.state.reading = null')
+pg.wait_for_timeout(1500)
+def make(name, look):
+    ev('__g.newCharacter()'); pg.wait_for_timeout(300)
+    ev('__g.state.creating.name = "%s"; Object.assign(__g.state.creating.look, %s)' % (name, json.dumps(look)))
+    ev('__g.beginGame()'); pg.wait_for_timeout(1000); prep()
+make('Ash Calder', {'skin': '#f3d0b0', 'hair': '#14100c', 'style': 'bald', 'feature': 'beard', 'jacket': '#7a4a4a', 'scarf': '#e8e0d0'})
+ev('__g.state.player.level = 3; __g.addItem("Wood", 11)'); ev('__g.doSave("1", true)'); pg.wait_for_timeout(1500)
+print('A saved. chars:', ev('__g.state.chars.length'))
+# second character: dirty session reloads to the creation screen
+ev('__g.newCharacter()'); pg.wait_for_timeout(3500)
+print('after reload: creating?', ev('!!__g.state.creating'), '| title', ev('__g.state.title'))
+ev('__g.state.creating.name = "Juno B"; Object.assign(__g.state.creating.look, {skin: "#5e3b26", hair: "#b8442a", style: "buzz", feature: "none", jacket: "#5a5a5a", scarf: "#4aa8c8"})')
+ev('__g.beginGame()'); pg.wait_for_timeout(1000); prep()
+ev('__g.state.player.level = 5; __g.doSave("1", true)'); pg.wait_for_timeout(1500)
+print('both exist:', ev('JSON.stringify(__g.state.chars.map(c=>[c.name,c.level]))'))
+# in-game save panel via the pause menu
+pg.keyboard.press('Escape'); pg.wait_for_timeout(300)
+ev('__g.state.pauseOpen = false; __g.state.savesOpen = {mode: "save"}'); pg.wait_for_timeout(500); shot('s_savepanel')
+ev('__g.state.savesOpen = null')
+# characters screen from the title
+ev('__g.state.title = true; __g.state.charsOpen = true'); pg.wait_for_timeout(500); shot('s_chars')
+# load the first character (dirty session reloads then loads)
+a = ev('__g.state.chars.find(c=>c.name==="Ash Calder").id')
+ev('__g.loadSlot("%s", "1")' % a); pg.wait_for_timeout(4000)
+print('loaded A:', ev('__g.state.player.name'), '| level', ev('__g.state.player.level'), '| wood', ev('__g.countItem("Wood")'), '| title', ev('__g.state.title'))
+b = ev('__g.state.chars.find(c=>c.name==="Juno B").id')
+ev('__g.deleteChar("%s")' % b); pg.wait_for_timeout(800)
+print('after deleting B:', ev('JSON.stringify(__g.state.chars.map(c=>c.name))'), '| metas left', ev('__g.state.metaAll.length'))

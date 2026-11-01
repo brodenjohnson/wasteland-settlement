@@ -1,0 +1,15 @@
+import json
+ev = lambda s: pg.evaluate(s)
+pg.keyboard.press('h'); pg.keyboard.press('g'); pg.keyboard.press('u'); pg.wait_for_timeout(100)
+pg.keyboard.press('i'); pg.wait_for_timeout(200)
+pg.screenshot(path='out/inv2.png')
+pg.keyboard.press('i')
+# teleport to hot spot 0 (20,18) edge; the husks and crate live there
+ev('__g.state.player.x = 24*16; __g.state.player.y = 20*16')
+pg.wait_for_timeout(600)
+pg.screenshot(path='out/hot.png')
+# teleport to the NW ruin (8,8,9,7)
+ev('__g.state.player.x = 12*16; __g.state.player.y = 16*16')
+pg.wait_for_timeout(500)
+pg.screenshot(path='out/ruin.png')
+print('rad rate near ruin:', ev('__g.state.radRate.toFixed(2)'))

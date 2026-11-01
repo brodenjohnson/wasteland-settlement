@@ -1,0 +1,11 @@
+import json
+ev = lambda s: pg.evaluate(s)
+ev('__g.state.placing = null; __g.enemies.length = 0; __g.state.iframes = 9999; __g.state.gameMinutes = 2*1440 + 10*60')
+ev('__g.enterMap("hull_cantina", -1, -1)'); pg.wait_for_timeout(4200)
+print('in', ev('__g.state.map'), '| people', ev('JSON.stringify(__g.survivors.filter(s=>s.town).map(s=>s.name))'))
+d = json.dumps(ev('JSON.stringify(__g.serialize())'))
+ev('__g.state.pendingLoad = JSON.parse(%s); __g.loadGame()' % d); pg.wait_for_timeout(3000)
+print('after save and load: map', ev('__g.state.map'), '| zone', ev('__g.state.zone'), '| player tile', ev('JSON.stringify([Math.floor(__g.state.player.x/16), Math.floor(__g.state.player.y/16)])'))
+b = json.loads(ev('JSON.stringify(__g.BID.cantina)')); ex = json.loads(ev('JSON.stringify(__g.layoutFor(__g.BID.cantina).exit)'))
+ev('__g.useInteract(__g.INTERACT.get(%d), %d)' % (ex['y']*128 + ex['x'], ex['y']*128 + ex['x'])); pg.wait_for_timeout(4200)
+print('walked out after loading:', ev('__g.state.map'))

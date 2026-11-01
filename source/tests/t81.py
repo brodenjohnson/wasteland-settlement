@@ -1,0 +1,15 @@
+import json
+ev = lambda s: pg.evaluate(s)
+def shot(n): pg.screenshot(path='out/%s.png' % n)
+ev('__g.state.title = false')
+ev('__g.state.spawnPts.forEach(s => { s.e = null; s.respawnAt = 1e9 }); __g.enemies.length = 0')
+pg.wait_for_timeout(800); pg.keyboard.press('Escape'); pg.wait_for_timeout(300)
+site = json.loads(ev('JSON.stringify({tile: __g.SITE_DEFS.pump.tile, def: __g.SITE_DEFS.pump.def})'))
+tx, ty = site['tile'] % 128, site['tile'] // 128
+print('pump def', site['def'], 'crate tile', (tx, ty))
+print('objs at tile:', ev('__g.objs[%d]' % site['tile']), '| tile type:', ev('__g.tiles[%d]' % site['tile']))
+print('objs around:', ev('JSON.stringify([-1,0,1].map(dy=>[-1,0,1].map(dx=>__g.objs[(%d+dy)*128+%d+dx])))' % (ty, tx)))
+ev('__g.state.player.x = (%d + 0.5) * 16; __g.state.player.y = (%d + 1.6) * 16' % (tx, ty)); pg.wait_for_timeout(500)
+shot('st_pump')
+print('mouse world:', ev('JSON.stringify([__g.state.mwx, __g.state.mwy])'), 'player', ev('JSON.stringify([__g.state.player.x, __g.state.player.y])'))
+print('getTarget exposed:', ev('typeof __g.getTarget'))

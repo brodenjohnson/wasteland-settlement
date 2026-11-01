@@ -1,0 +1,10 @@
+import json
+ev = lambda s: pg.evaluate(s)
+ev('Object.assign(__g.state.qflags, {chapterOne: true})'); ev('__g.enemies.length = 0')
+tp = json.loads(ev('JSON.stringify(__g.state.towerPortal)'))
+ev('__g.state.player.x = (%d + 0.5) * 16; __g.state.player.y = (%d + 1.6) * 16' % (tp['x'], tp['y'])); pg.wait_for_timeout(500)
+pg.mouse.move(550, 350 - 70); pg.wait_for_timeout(300)
+print('mouse world tile:', ev('JSON.stringify([Math.floor(__g.state.mwx/16), Math.floor(__g.state.mwy/16)])'), '| portal tile:', (tp['x'], tp['y']))
+t = ev('JSON.stringify((()=>{ const t = __g.getTarget(); return t && {i:t.i, inReach:t.inReach, name:t.res && t.res.name, dist:t.dist}; })())')
+print('target:', t)
+print('actCd', ev('__g.state.actCd'), 'sel', ev('JSON.stringify(__g.state.sel)'), '| placing', ev('__g.state.placing'), '| menus', ev('__g.anyMenuOpen()'))

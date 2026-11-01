@@ -1,0 +1,841 @@
+// WASTELAND DIALOGUE SCRIPT
+//
+// Format
+//   === node_id                      starts a node
+//   Name: spoken text                a page of dialogue (Name can be anyone, You is the player)
+//   ~ narration text                 a page with no speaker
+//   @ effect; effect                 effects that run as the node starts
+//   > next_node                      go here after the last page (when there are no choices)
+//   * [Tag N] Label => target | if cond | do effect; effect
+//
+// Tags: Honest, Lie, Mercy, Ruthless, Item, Memory N, Combat N, Exploring N, Gathering N, Crafting N, Fishing N
+//   Memory N and the skill tags are checks. The rest are just labels.
+// Conditions (join with &, start with ! to negate):
+//   flag:name   item:Name   item:Name>=3   quest:id=done|active|none
+//   rep.mercy>=2   skill.combat>=3   memory>=2   day>=5   level>=3
+// Effects (join with ;):
+//   flag:name  unflag:name  rep.mercy+1  rep.trust-1  give:Item x2  take:Item x1  caps:20  xp:30
+//   quest:start id  event:name  log:text  toast:text  heal:20  hurt:10  recruit  removeNpc  rumour  end
+// Reputation tracks: mercy, trust, listeners, hull, raiders (each from -10 to 10)
+
+// ---------------------------------------------------------------- ECHOES
+=== echo_Folded Note
+~ A kitchen table. A desk lamp with a failing bulb. Your own hand, steadier than you expected, writing the word "sorry".
+~ Somebody is standing behind you and not saying anything. You do not turn around.
+~ You finish the sentence. You do not cross it out.
+
+=== echo_Dispatch Slip
+~ A loading dock under strip lights. Eleven crates on a trolley, one for each tag.
+~ A voice you know says "Collect last." Your own voice says "That's me."
+~ Somebody laughs. It is not a happy sound.
+
+=== echo_Pump Ledger
+~ The hum of a pump in a concrete room. A woman's hand, older than yours, ticking down a column of numbers.
+~ She counts ten, then eleven, then stops and counts again. She does not look up.
+~ "One missing," she says. "I know which." You are the one holding the door.
+
+=== echo_Signal Tape
+~ A small room, a microphone, a red light. You are speaking and you are not afraid, which frightens you more than anything has yet.
+~ "If I'm listening to this," says your voice, "then it worked. Do not trust the radio."
+~ Then, in a voice that could be yours or could be hers, very quietly: "That is us. That is the radio."
+
+// ---------------------------------------------------------------- ENCOUNTERS
+=== raider_wounded
+@ flag:met_raider
+~ A man in a patched coat sits against a rock with one hand pressed to his side. The blood is the wrong colour at the edges. A pipe lies within reach and he has not touched it.
+Raider: Go on, then. Or don't. I haven't got the energy to argue about it.
+* [Mercy] Patch him up. => raider_patch | if item:Bandage
+* Ask who he rode with. => raider_ask
+* [Ruthless] Finish it. => raider_finish
+* Take his gear and leave him. => raider_rob
+* Walk away. => END
+
+=== raider_ask
+Raider: Nobody you'd know. A crew out of the city. We heard there was a signal. Free food, free beds, come in out of the dust.
+Raider: Half of us turned back. The other half are still walking toward it. I was in the second half until something took a bite out of me.
+@ flag:raider_signal
+* [Mercy] Patch him up. => raider_patch | if item:Bandage
+* Take his gear and leave him. => raider_rob
+* Walk away. => END
+
+=== raider_patch
+@ take:Bandage; rep.mercy+1; flag:raider_helped; xp:15; log:You stopped to patch up a wounded raider
+~ He flinches when you press the cloth down, then goes quiet and watches the sky.
+Raider: Why would you bother?
+* "I don't know." => raider_thanks
+* "You're somebody's problem. I'd rather it was mine." => raider_thanks | do rep.trust+1
+* "So you owe me." => raider_owe | do rep.mercy-1
+
+=== raider_thanks
+Raider: Then I owe you. There's a stash in a tin shed east of the pines. Take what's in it, I won't need it.
+@ rumour; give:Scrap x4; removeNpc
+> raider_end
+
+=== raider_owe
+Raider: Fair enough. Everything has a price out here.
+@ give:Pistol rounds x6; removeNpc
+> raider_end
+
+=== raider_end
+~ He limps off the way he came, one hand still on the bandage.
+
+=== raider_finish
+@ rep.mercy-2; flag:raider_killed; give:Scrap x3; give:Pistol rounds x4; log:You finished a wounded raider who was not fighting back; removeNpc; hurt:0
+~ He looks at you, not at the pipe, and says something you do not catch. It is over quickly. He had very little on him.
+~ Nobody saw. That is not the same as nobody knowing.
+
+=== raider_rob
+@ rep.mercy-1; give:Scrap x5; give:Pistol rounds x3; log:You stripped a wounded raider and left him to it; removeNpc
+Raider: Take it. Take the lot. I'll see you in whatever comes next.
+~ You leave him with the pipe and nothing else.
+
+=== traveller_hungry
+Traveller: You wouldn't have anything to eat? I'm not asking for much. A tin. Half a tin.
+* [Mercy] Give them a tin of food. => trav_feed | if item:Canned food
+* Ask where they are headed. => trav_where
+* [Combat 2] Tell them to hand over what they have instead. => trav_rob
+* Walk on. => END
+
+=== trav_where
+Traveller: The coast. You've heard the signal. Come in out of the dust, it says. Three weeks I've been walking toward it.
+* "It's not a rescue." => trav_warn
+* [Mercy] Give them a tin of food. => trav_feed | if item:Canned food
+* "Good luck." => END
+
+=== trav_warn
+@ flag:warned_traveller; rep.listeners-1; log:You told a traveller the signal was not a rescue
+Traveller: You can't know that. ... Can you?
+Traveller: It's all I've got, you understand. If it's nothing, then I walked here for nothing.
+* [Honest] "I don't know what it is. I know somebody tried to warn me about it." => trav_end | do rep.trust+1
+* "Forget I said anything." => trav_end
+
+=== trav_feed
+@ take:Canned food; rep.mercy+1; flag:fed_traveller; xp:10; log:You gave a starving traveller a tin of food; caps:12
+Traveller: ...Thank you. I mean that. Here, it's all I've got.
+> trav_end
+
+=== trav_rob
+@ rep.mercy-1; give:Scrap x4; caps:15; log:You robbed a traveller at knifepoint
+Traveller: Take it. Take it, I've got nothing else. Please.
+~ They do not look at you as they leave.
+> trav_end
+
+=== trav_end
+~ They shoulder their pack and keep walking the way they were going.
+
+// ---------------------------------------------------------------- THE TEN: STARTING A STORY
+=== sq_marta_ask
+Marta: You've got the look of somebody who's been told something and can't remember by whom.
+Marta: I kept the seed stock. Forty varieties, sealed, tagged. There was a case with a label on it. I can see the handwriting and I can't see the face.
+* [Honest] Show her the note in your pocket. => sq_marta_open | if flag:read:Folded Note
+* Say nothing. => sq_marta_closed
+* [Lie] "Never seen it." => sq_marta_lie
+
+=== sq_marta_open
+@ rep.trust+1; flag:told_marta
+Marta: ...That's the same hand. Then you're the reason I haven't opened it.
+> sq_marta_task
+
+=== sq_marta_closed
+Marta: Fair enough. I wouldn't tell me either.
+> sq_marta_task
+
+=== sq_marta_lie
+@ rep.trust-1; flag:lied_marta
+Marta: Right. Of course.
+> sq_marta_task
+
+=== sq_marta_task
+Marta: Grow me three tomatoes. I want to see whether the soil here still remembers how.
+@ quest:start sq_marta; log:Marta Voss asked you to grow three tomatoes
+
+=== sq_marta_done
+Marta: You grew them. I had forgotten anything still did that.
+~ She turns the card in her fingers. Tag 1 on the front. On the back, in her own handwriting from before: "I opened it once. I should not have."
+* "What was in the case?" => sq_marta_d1
+* [Honest] Tell her what you know about the eleven. => sq_marta_d2
+* Pocket the card and say nothing. => sq_marta_d3
+
+=== sq_marta_d1
+Marta: I don't know. That is what frightens me. Whatever it was, I stopped wanting to know.
+
+=== sq_marta_d2
+@ rep.trust+1; flag:told_marta_all; log:You told Marta what you knew about the eleven
+Marta: Eleven. And one of them is you. ...Well. That explains the way you look at everything, like it owes you money.
+
+=== sq_marta_d3
+@ flag:withheld_marta; log:You kept what you knew from Marta
+Marta: You do that a lot, I expect.
+
+=== sq_dex_ask
+Dex: Raiders took my crew. I watched it happen. I got out because I was in the pit and nobody looks in the pit.
+Dex: I don't need your sympathy. I need somebody who can hold a pipe and not drop it.
+* [Combat 2] "I can handle raiders." => sq_dex_open | if skill.combat>=2
+* "I'm sorry about your crew." => sq_dex_sorry
+* [Lie] "I've done this before." => sq_dex_lie
+
+=== sq_dex_open
+@ rep.trust+1; flag:dex_respect
+Dex: Good. Then put five of them down and bring me stone for a marker. Ten pieces.
+> sq_dex_task
+
+=== sq_dex_sorry
+Dex: Don't be sorry. Be useful.
+> sq_dex_task
+
+=== sq_dex_lie
+@ rep.trust-1; flag:lied_dex
+Dex: Sure you have.
+> sq_dex_task
+
+=== sq_dex_task
+Dex: Five raiders. Ten stone. Then we talk.
+@ quest:start sq_dex; log:Dex Harlan asked for five raiders and ten stone
+
+=== sq_dex_done
+Dex: Five. I counted, in case you were wondering. I count everything now.
+~ Tag 2 is scratched on the card. He has underlined something on the back: "Nine voices on the first night. Ten the next."
+* "Who was the tenth voice?" => sq_dex_d1
+* [Honest] Tell him someone is answering the radio. => sq_dex_d2
+* Say nothing. => sq_dex_d3
+
+=== sq_dex_d1
+Dex: I don't know. It answered like it was in the room. It answered like it was sorry.
+
+=== sq_dex_d2
+@ rep.trust+1; flag:told_dex_radio; log:You told Dex someone was answering the radio
+Dex: Then we find out who, and we stop them. Or we help them. I haven't decided.
+
+=== sq_dex_d3
+@ flag:withheld_dex
+Dex: Keep your secrets. I keep my count.
+
+=== sq_wren_ask
+Wren: There's a mark on every ruin door. An eleven, scratched with something sharp. I didn't do it. I walked the whole map to be sure.
+* [Honest] "I think I know what it means." => sq_wren_open | if flag:read:Dispatch Slip
+* "Show me where." => sq_wren_show
+* [Lie] "Probably kids." => sq_wren_lie
+
+=== sq_wren_open
+@ rep.trust+1; flag:told_wren
+Wren: Then tell me when you're ready. I'm not going anywhere.
+> sq_wren_task
+
+=== sq_wren_show
+Wren: Everywhere. That's the problem.
+> sq_wren_task
+
+=== sq_wren_lie
+@ rep.trust-1; flag:lied_wren
+Wren: Kids, then. In a world with no kids.
+> sq_wren_task
+
+=== sq_wren_task
+Wren: Walk the pines, the ashlands and the city. Look at the doors. Then I'll draw you what I found.
+@ quest:start sq_wren; log:Wren Alvarez asked you to walk the pines, the ashlands and the city
+
+=== sq_wren_done
+Wren: You saw them. Good. Then you know I wasn't imagining it.
+~ Her card says Tag 3. On the back, in a quick hand: "Whoever marks the doors is leaving a trail for people who forgot."
+* "A trail to what?" => sq_wren_d1
+* [Honest] "They are waypoints. Someone left caches." => sq_wren_d2
+* Change the subject. => sq_wren_d3
+
+=== sq_wren_d1
+Wren: Caches, I'd say. Somebody was looking after us before we woke.
+
+=== sq_wren_d2
+@ rep.trust+1; flag:told_wren_caches; rumour; rumour; log:You told Wren the marks were caches
+Wren: Then let's go and find them.
+
+=== sq_wren_d3
+@ flag:withheld_wren
+Wren: Fine. I'll find out on my own, same as always.
+
+=== sq_tomas_ask
+Tomas: They survived. The bees. I'd bet my boots on it. Somewhere there's a box with a queen in it, minding her own business.
+Tomas: I was never on any list. I don't know why my name is on this tag.
+* [Honest] "I don't know either." => sq_tomas_open
+* "Someone put you there for the bees." => sq_tomas_guess | if flag:read:Dispatch Slip
+* [Lie] "It's a mistake, then." => sq_tomas_lie
+
+=== sq_tomas_open
+@ rep.trust+1
+Tomas: Honest, at least. I'll take honest over comforting.
+> sq_tomas_task
+
+=== sq_tomas_guess
+Tomas: The bees. Of course. It's always the bees.
+> sq_tomas_task
+
+=== sq_tomas_lie
+@ rep.trust-1; flag:lied_tomas
+Tomas: A mistake. Yes. That'll be it.
+> sq_tomas_task
+
+=== sq_tomas_task
+Tomas: Bring me six berries and put a pot of something green on the table. Bees like a garden.
+@ quest:start sq_tomas; log:Old Tomas asked for six berries and a potted plant
+
+=== sq_tomas_done
+Tomas: There. A garden. Of sorts.
+~ His card says Tag 4. He has written on the back, in shaky capitals: "WHO DECIDED I WAS NECESSARY?"
+* "I'd like to know too." => sq_tomas_d1
+* [Honest] "You were on the list because they needed bees." => sq_tomas_d2
+* Hand him the honey and say nothing. => sq_tomas_d3
+
+=== sq_tomas_d1
+Tomas: Then we are two old fools, and one of us is younger than he looks.
+
+=== sq_tomas_d2
+@ rep.trust+1; flag:told_tomas; log:You told Tomas why he was on the list
+Tomas: Hah. Then I'm needed for something. That's more than I had this morning.
+
+=== sq_tomas_d3
+@ flag:withheld_tomas
+Tomas: ...Thank you for the honey.
+
+=== sq_ripley_ask
+Ripley: Concrete, steel, and very little else. That's what I trust. You, I'm still deciding.
+Ripley: The bunker under the tower was built from plans with a signature on them. I won't say whose. Not until I've seen how you hold a line.
+* [Combat 1] "I can hold a line." => sq_ripley_open | if skill.combat>=1
+* "Whose signature?" => sq_ripley_ask2
+* [Lie] "I've held bigger." => sq_ripley_lie
+
+=== sq_ripley_open
+@ rep.trust+1
+Ripley: Then build two towers and prove it.
+> sq_ripley_task
+
+=== sq_ripley_ask2
+Ripley: After. Two towers, one raid. Then we talk signatures.
+> sq_ripley_task
+
+=== sq_ripley_lie
+@ rep.trust-1; flag:lied_ripley
+Ripley: Mm. We'll see.
+> sq_ripley_task
+
+=== sq_ripley_task
+Ripley: Two guard posts. Survive a raid. Then we talk.
+@ quest:start sq_ripley; log:Ripley Cho asked for two guard towers and a raid survived
+
+=== sq_ripley_done
+Ripley: You held it. I'll admit that to the wall, since I won't admit it to you.
+~ Tag 5. On the back, in drafting-pencil: "Plans signed by Unit 11. Not an accusation."
+* "It was mine, wasn't it." => sq_ripley_d1
+* [Honest] "I think I designed all of it." => sq_ripley_d2
+* "Don't tell the others." => sq_ripley_d3
+
+=== sq_ripley_d1
+Ripley: Your signature. Your drafting. A very good bunker. I'd like to know what you were afraid of.
+
+=== sq_ripley_d2
+@ rep.trust+1; flag:told_ripley; log:You told Ripley the plans were probably yours
+Ripley: Then you were afraid of something specific. Find out what, and tell me.
+
+=== sq_ripley_d3
+@ rep.trust-1; flag:asked_ripley_silence; log:You asked Ripley to keep the plans quiet
+Ripley: I don't keep secrets for people I don't know. I'll consider it.
+
+=== sq_sam_ask
+Sam: I can fix a truck if you bring me the bits. A truck is just a road you carry with you.
+Sam: I drove the depot runs. I remember the manifest and I remember something being wrong with it, and I can't tell you what.
+* [Honest] "There was a twelfth line crossed out." => sq_sam_open | if flag:read:Dispatch Slip
+* "What kind of wrong?" => sq_sam_ask2
+* [Lie] "Probably just a typo." => sq_sam_lie
+
+=== sq_sam_open
+@ rep.trust+1
+Sam: ...Yes. That's it. A twelfth line. Thank you. I've been trying to remember that for a month.
+> sq_sam_task
+
+=== sq_sam_ask2
+Sam: A name. A name that wasn't mine and wasn't anyone's I knew.
+> sq_sam_task
+
+=== sq_sam_lie
+@ rep.trust-1; flag:lied_sam
+Sam: A typo. Sure.
+> sq_sam_task
+
+=== sq_sam_task
+Sam: Twelve scrap, three plate. Then I'll be useful.
+@ quest:start sq_sam; log:Sam Oduya asked for twelve scrap and three metal plate
+
+=== sq_sam_done
+Sam: She runs. That's more than I expected.
+~ Tag 6. On the back he has copied out the manifest from memory, eleven lines in pencil and a twelfth, scribbled over so hard the paper has torn.
+* "Whose name was it?" => sq_sam_d1
+* [Honest] "I think it was the engineer's." => sq_sam_d2 | if flag:read:Pump Ledger
+* Say nothing. => sq_sam_d3
+
+=== sq_sam_d1
+Sam: I don't know. I think I helped cross it out. I think I was told to.
+
+=== sq_sam_d2
+@ rep.trust+1; flag:told_sam; log:You told Sam who the twelfth name probably was
+Sam: ...Then somebody wanted her gone from the paperwork. Or wanted her protected. Those look the same in ink.
+
+=== sq_sam_d3
+@ flag:withheld_sam
+
+=== sq_lena_ask
+Lena: Steady hands, unsteady memory. I've stitched myself up twice since waking and I'm not proud of either.
+Lena: I'd like to stop being my own patient. Get me a proper clinic and I'll earn my bed.
+* [Honest] "I'll build it. What do you need?" => sq_lena_open
+* "Why are you still alive?" => sq_lena_ask2
+* [Lie] "I'm not sure we can." => sq_lena_lie
+
+=== sq_lena_open
+@ rep.trust+1
+Lena: A clinic bed, bandages, a table. And three clean bandages in my hand.
+> sq_lena_task
+
+=== sq_lena_ask2
+Lena: Stubborn. And I was kept under longer than most, which I think is the only reason I'm any use.
+> sq_lena_task
+
+=== sq_lena_lie
+@ rep.trust-1; flag:lied_lena
+Lena: Then I'll keep stitching myself.
+> sq_lena_task
+
+=== sq_lena_task
+Lena: Build a clinic. Three bandages.
+@ quest:start sq_lena; log:Lena Fischer asked for a clinic and three bandages
+
+=== sq_lena_done
+Lena: There. Now I can do some good.
+~ Tag 7. On the back: "The sleepers were not frozen. They were kept under, slowly, and woken one by one. The last one was kept under longest."
+* "Why the last one?" => sq_lena_d1
+* [Honest] "I think I'm the last one." => sq_lena_d2
+* Pocket the card. => sq_lena_d3
+
+=== sq_lena_d1
+Lena: Because someone was delaying you. Or someone was afraid of you waking.
+
+=== sq_lena_d2
+@ rep.trust+1; flag:told_lena; log:You told Lena you were the last sleeper
+Lena: I thought you might be. You wake up like someone who isn't sure they should have.
+
+=== sq_lena_d3
+@ flag:withheld_lena
+Lena: Keep it. I've got a clinic to run.
+
+=== sq_boone_ask
+Boone: Security. That was my job. I was told to watch someone and I fell asleep, or somebody made me. I keep my back to a wall.
+Boone: There's a Husk walking out there I think I used to know.
+* [Honest] "I'll put it down for you." => sq_boone_open
+* "Are you sure it's him?" => sq_boone_ask2
+* [Lie] "I'll check, but I doubt it." => sq_boone_lie
+
+=== sq_boone_open
+@ rep.trust+1
+Boone: Thank you. And ten rounds, so I'm not useless when it's done.
+> sq_boone_task
+
+=== sq_boone_ask2
+Boone: No. That's the trouble.
+> sq_boone_task
+
+=== sq_boone_lie
+@ rep.trust-1; flag:lied_boone
+Boone: Then check.
+> sq_boone_task
+
+=== sq_boone_task
+Boone: One Husk. Ten pistol rounds.
+@ quest:start sq_boone; log:Boone Keller asked you to put down a Husk and bring ten rounds
+
+=== sq_boone_done
+Boone: It's done, then.
+~ Tag 8. On the back, very small: "My orders were to watch Unit 11. I did not do it well."
+* "It's not your fault." => sq_boone_d1
+* [Honest] "I'm Unit 11." => sq_boone_d2
+* "What did you see?" => sq_boone_d3
+
+=== sq_boone_d1
+Boone: You don't know that. Neither do I.
+
+=== sq_boone_d2
+@ rep.trust+1; flag:told_boone; log:You told Boone you were the one he was meant to watch
+Boone: ...I know. I've known since the first night. I didn't want it to be true.
+
+=== sq_boone_d3
+Boone: Eyes closing. A hand on my shoulder, kind. A voice that said sleep. That's all.
+
+=== sq_priya_ask
+Priya: The broadcast is not a signal. It's a recording on a loop. I can hear the splice.
+Priya: Get me scrap and two plates so I can build a receiver. Then stand under the tower and tell me what you hear.
+* [Honest] "I heard the tape. It says to bring the ten." => sq_priya_open | if flag:read:Signal Tape
+* "What do you hear?" => sq_priya_ask2
+* [Lie] "I haven't been near it." => sq_priya_lie
+
+=== sq_priya_open
+@ rep.trust+1
+Priya: Then you know it's calling us home. That is not the same as being kind.
+> sq_priya_task
+
+=== sq_priya_ask2
+Priya: A woman reading numbers. And, under her, someone I've heard in person.
+> sq_priya_task
+
+=== sq_priya_lie
+@ rep.trust-1; flag:lied_priya
+Priya: Of course you haven't.
+> sq_priya_task
+
+=== sq_priya_task
+Priya: Six scrap, two plate, and stand under the tower.
+@ quest:start sq_priya; log:Priya Nair asked for a receiver and a trip to the Ash Tower
+
+=== sq_priya_done
+Priya: There it is. The voice. I knew it.
+~ Tag 9. On the back: "I won't say whose voice. Not yet. I want to be wrong."
+* "Whose is it?" => sq_priya_d1
+* [Honest] "I think it's the engineer from the pump house." => sq_priya_d2 | if flag:read:Pump Ledger
+* "Tell me when you're sure." => sq_priya_d3
+
+=== sq_priya_d1
+Priya: I'd rather you worked it out. It is worse if I say it.
+
+=== sq_priya_d2
+@ rep.trust+1; flag:told_priya; log:You told Priya you suspected the engineer
+Priya: ...I think so too. And I think she's been alone for a very long time.
+
+=== sq_priya_d3
+@ flag:withheld_priya
+Priya: Fine. I'm sure. I just can't say it.
+
+=== sq_juno_ask
+Juno: Did you eat? Sorry. I ask everyone. I used to cook for the wake group and it's a habit.
+Juno: There was a table set for eleven. One place was never touched. I think it was yours.
+* [Honest] "I think it was." => sq_juno_open
+* "I don't know what you mean." => sq_juno_ask2
+* [Lie] "Never been much of a sitter." => sq_juno_lie
+
+=== sq_juno_open
+@ rep.trust+1
+Juno: Then bring me something warm, and sit at it.
+> sq_juno_task
+
+=== sq_juno_ask2
+Juno: Hm. You will.
+> sq_juno_task
+
+=== sq_juno_lie
+@ rep.trust-1; flag:lied_juno
+Juno: No. I don't think that's it.
+> sq_juno_task
+
+=== sq_juno_task
+Juno: Cook three meals and bring me a stew. Any stew.
+@ quest:start sq_juno; log:Juno Park asked for three meals and a stew
+
+=== sq_juno_done
+Juno: There. You remembered how.
+~ Tag 10. On the back, in round handwriting: "A place for eleven. I kept your seat warm. Come back."
+* "Where was the table?" => sq_juno_d1
+* [Honest] "I'm sorry I wasn't there." => sq_juno_d2
+* Eat. => sq_juno_d3
+
+=== sq_juno_d1
+Juno: Somewhere with a long window. I can still see the light on the wood.
+
+=== sq_juno_d2
+@ rep.trust+1; flag:told_juno; log:You told Juno you were sorry you were not at the table
+Juno: You were just late. You've always been late.
+
+=== sq_juno_d3
+@ flag:ate_with_juno; xp:20
+~ You sit. You eat. It is the best thing you have eaten since waking, and that is not the stew's fault.
+
+// ---------------------------------------------------------------- THE KIND STRANGER
+=== mara_ask
+@ flag:mara_seen
+Mara: Please. Have you got a minute? My brother went into the Greybridge Depot three days ago, scavenging, and the roof came down behind him. I can hear him shouting through a vent.
+Mara: I can't shift the beam alone. I can't fight. But I can pay. My father's rifle, and a map to a cache.
+* [Mercy] "Show me where it is." => mara_yes
+* [Exploring 2] Look at her boots. => mara_boots | if !flag:mara_boots_seen
+* "How much, exactly?" => mara_price
+* "Not my problem." => mara_no
+
+=== mara_boots
+@ flag:mara_boots_seen
+~ Clean boots. Clean hands. A fresh bandage on a wound that is not bleeding. She has not been hiding in a vent shaft for three days.
+* "You're lying to me." => mara_expose
+* Play along. => mara_yes
+* "Not my problem." => mara_no
+
+=== mara_expose
+@ flag:mara_exposed; flag:camp_known; log:You caught a stranger in a lie before she could use it
+Mara: ...Right. Right. They did say the next one might be clever.
+Mara: There's a man at the side door and three more in the trees. The depot is Varro's. He keeps forty people who owe him, and a cage for the ones who don't. I only bring them in. Don't kill me.
+* "Tell me where the door is." => mara_where
+* [Ruthless] "No." => mara_kill
+
+=== mara_where
+@ rumourCamp; quest:start stranger; removeNpc
+Mara: North of the river, old cargo yard, side door by the loading bay. Please don't tell him I told you.
+~ She is gone before you can change your mind.
+
+=== mara_kill
+@ rep.mercy-2; flag:mara_dead; give:Scrap x3; removeNpc; log:You killed a woman who told you the truth too late
+~ She does not get a word out. It is not the sort of thing you do well, and you do it anyway.
+
+=== mara_yes
+@ flag:camp_known; flag:mara_trusted; rumourCamp; quest:start stranger; removeNpc; log:You agreed to help a stranger dig her brother out of a collapsed depot
+Mara: Bless you. North of the river, the Greybridge Depot. Side door by the loading bay. You can hear him if you put your ear to the vent.
+~ She watches you go. You do not look back, which turns out to be the mistake.
+
+=== mara_price
+Mara: A rifle. And a map. It's everything I have.
+* [Mercy] "Fine. Show me." => mara_yes
+* [Exploring 2] Look at her boots. => mara_boots | if !flag:mara_boots_seen
+* "No." => mara_no
+
+=== mara_no
+Mara: ...Fair enough. If you change your mind, I'll be here a while.
+
+=== camp_trap
+~ The side door by the loading bay is open. Inside, the yard smells of woodsmoke and old oil. Somewhere above you a rifle bolt clacks.
+Varro: That's the one. Don't shoot him. He's carrying something worth looking at.
+~ Four of them step out from behind the crates. You reach for your pipe and find a gun already in your face.
+Mara: I'm sorry. They have my brother. Truly. I'm sorry.
+* [Combat 3] Go for the nearest one. => camp_fight
+* "Mara. Don't do this." => camp_plead
+* Put your hands up. => camp_surrender
+
+=== camp_fight
+~ You get one swing in. It lands. It is the last good thing that happens for a while.
+> camp_captured
+
+=== camp_plead
+Mara: I can't. They said they would...I can't.
+> camp_captured
+
+=== camp_surrender
+~ You raise your hands slowly. Somebody laughs. Something heavy comes down on the back of your head.
+> camp_captured
+
+=== camp_captured
+@ capture; log:You were walked into a trap and woke up in a cage
+~ Cold iron against your cheek. A smell of old blood and bleach. Your pockets are empty. Your pack is gone. So is the pipe.
+~ Through the bars you can see a corridor, a guttering lantern, and a doorway to a room full of shelves.
+You: Right. So that is what that felt like.
+
+=== camp_alert
+@ alarm; flag:camp_alarm
+~ You step through the side door with your weapon already out. Four rifles come up in the yard and none of them look surprised.
+Varro: Told you she'd talk. Never trust a soft heart with a map.
+Varro: Boys. Bring me his head. Leave the rest.
+
+=== varro_intro
+Varro: Well. You got out of the cage. I put a lot of people in that cage. You are the first to come back for his own teeth.
+Varro: Here is how this goes. You put the pipe down, you tell me where your friends keep their things, and I let you leave on the legs you walked in on.
+* [Combat 3] "I'll take the legs and the camp." => varro_fight
+* Pay him off (150 caps). => varro_pay | if item:Caps>=150
+* [Lie] "There are forty people coming up the road." => varro_bluff
+* "Say that again after I've broken your jaw." => varro_fight
+
+=== varro_bluff
+Varro: Forty. Then they will be late. Boys!
+> varro_fight
+
+=== varro_fight
+Varro: Good. I was getting bored.
+
+=== varro_pay
+@ take:Caps x150; flag:varro_paid; standdown; log:You paid a kingpin to let you walk out; event:varro:done
+Varro: Smart. Leave. The door is behind you.
+~ He does not look at you again. That is a mercy, of a kind.
+
+=== varro_surrender
+~ Varro is on his knees with one hand pressed to his side. The camp has gone quiet around him. You can hear the lantern swing.
+Varro: Alright. Alright. You have won. Everything in this room is yours, and the key to the cache under the loading bay. Forty people owe me. They will owe you.
+* [Mercy] "Get out. Take your people and do not come back." => varro_spare
+* "The cache. Now." => varro_cache
+* [Ruthless] Finish it. => varro_kill
+
+=== varro_spare
+@ rep.mercy+2; flag:varro_spared; give:Caps x80; give:Metal plate x3; standdown; log:You let the Kingpin walk away from his own camp; event:varro:done; removeNpc; xp:120
+Varro: ...I will not forget this.
+~ He will not. You are quite sure of that, and not in the way he means it.
+
+=== varro_cache
+@ flag:varro_robbed; give:Caps x150; give:Metal plate x4; give:Rad-Away x2; standdown; log:You took everything a beaten kingpin owned and left him breathing; event:varro:done; removeNpc; xp:140
+Varro: Take it. Take the lot.
+~ He watches you fill your pack. You think he is memorising your face.
+
+=== varro_kill
+@ rep.mercy-2; flag:varro_dead; give:Kingpin's Cleaver; give:Caps x120; give:Metal plate x4; standdown; log:You killed a beaten kingpin on his knees; event:varro:done; removeNpc; xp:180
+~ He does not beg, which you will think about later. It is done quickly. The lantern goes on swinging.
+
+// ---------------------------------------------------------------- TERMINALS
+=== term_deepcut
+~ A cracked terminal, still warm. SHIFT LOG, DEEPCUT EXTENSION, SHAFT 4.
+~ Day 3. The foreman says the new seam goes under the old riverbed. Pumps are keeping up. Dex says the walls are talking. Nobody laughs.
+~ Day 9. Something is nesting in the lower gallery. It has taken two of the night crew. Management says keep digging.
+~ Day 11. Management sent men with rifles. The rifles are not the problem. It is not nesting. It is waiting.
+
+=== term_hollow
+~ A hunter's log, scratched into a tin plate. THE HOLLOW.
+~ I came in after the dogs. The dogs came out. I did not see what came after them, and I have decided not to go back in to look.
+~ If you are reading this, the crossbow on the shelf is mine. It was a good crossbow. I have no more use for it.
+
+=== term_megamart
+~ A manager's terminal, screen cracked, still showing a clearance banner. MEGAMART, FINAL SHIFT.
+~ Announcement, 14:02. Shoppers are asked to remain calm. Doors will not reopen until the event is over.
+~ Announcement, 14:20. Shoppers are asked to stop screaming.
+~ Announcement, 17:44. Staff may now use the loading dock. Shoppers are advised that the dock is no longer a safe place.
+
+=== term_pylon3
+~ A control desk and a single operator's chair, still warm. PYLON 3, RELAY STATION.
+~ The broadcast is not coming from here. We only carry it. Whatever is sending it is a long way off and it is not tired.
+~ The signal changes at night. It starts to say names. We took the names to our supervisor. Our supervisor stopped coming to work.
+~ Names this week: Voss. Harlan. Alvarez. Tomas. Cho. Oduya. Fischer. Keller. Nair. Park. And then a number. Eleven.
+
+// ---------------------------------------------------------------- THE TIDEWRACK
+=== odile_intro
+~ The lighthouse door is open. A woman sits at the top of the stairs with a lamp between her knees and a radio in her lap. She does not get up.
+Odile: Unit 11. You are early. I have been waiting a long time, and I did not expect early.
+Odile: I answer what I am asked. I do not volunteer. That is not a courtesy. It is how I was made.
+@ flag:odile_met; log:You met Odile Marr, the Warden, at the top of a lighthouse
+> odile_hub
+
+=== odile_hub
+Odile: Ask.
+* "Who are you?" => odile_who | if !flag:ask_who
+* "What is the Cradle?" => odile_cradle | if !flag:ask_cradle
+* "What did I do?" => odile_did | if !flag:ask_did
+* [Memory 2] "You called me Director on the tape." => odile_director | if !flag:ask_director
+* "Who are the Listeners?" => odile_listeners | if !flag:ask_listeners
+* "What do you need from me?" => odile_need | if !flag:lamplighter_started
+* "How do I get to the Cradle?" => odile_way | if flag:lamplighter_started
+* "I have the case." => odile_case | if item:Manifest Case & !flag:lamplighter_done
+* "What is the quorum?" => odile_quorum | if flag:lamplighter_done & !flag:ask_quorum
+* "Nothing. Not yet." => odile_leave
+
+=== odile_who
+@ flag:ask_who
+Odile: Odile Marr. Unit 12. Warden of the coast station. I kept the lamp, and the door, and the list.
+> odile_hub
+
+=== odile_cradle
+@ flag:ask_cradle
+Odile: A vault under the breakwater. Three thousand and twelve people, asleep. It is failing. No one has said so aloud in a very long time.
+Odile: It cannot be repaired. It can be emptied slowly, or all at once, or not at all.
+> odile_hub
+
+=== odile_did
+@ flag:ask_did; log:Odile told you your signature is on the paper that began the war
+Odile: You signed. Not the order. The paper that made the order possible. Your name is on it.
+Odile: I will not tell you what you were like. You will find that out faster than I can say it.
+> odile_hub
+
+=== odile_director
+@ flag:ask_director
+Odile: Director. Yes. That was your title, before the sleep took it.
+Odile: Forty people designed the war. You were one of them. You were given a number. The number was eleven.
+> odile_hub
+
+=== odile_listeners
+@ flag:ask_listeners
+Odile: People who heard the broadcast and decided it was a voice and not a signal. They keep Chapel Row. They keep the door. They will not open it for a man who says he has the right.
+Odile: They are not wrong to be afraid. They are wrong about what of.
+> odile_hub
+
+=== odile_need
+@ flag:lamplighter_started; quest:start lamplighter; log:Odile asked you to recover a case from the wrecks at low tide
+Odile: A case. Black, waterproof, brass corners. It went down with the supply barge in the Wreck Fields the night the tide first failed. Low tide only. It holds two of your logs. They are the only ones still honest.
+Odile: Bring it to me, and I will tell you what is in it. That is a promise and also a warning.
+> odile_hub
+
+=== odile_way
+Odile: Chapel Row sits between us and the breakwater. There are three ways past it. You may ask them. You may go through them. Or you may wait for the tide and crawl under them. Each way costs something.
+Odile: Past the Listeners is the antechamber. In the antechamber is a console. The console will ask how many tags you carry.
+> odile_hub
+
+=== odile_case
+@ take:Manifest Case; give:Director Log 2; give:Director Log 3; flag:lamplighter_done; event:lamp:given; xp:150; log:You recovered the Manifest Case for Odile; quest:start quorum
+~ You set the case on the stairs. Odile opens it with a thumbnail and a small, practised movement. Inside: two slim folders and a cassette.
+Odile: Director Logs two and three. Your voice. Read them when you can stand to.
+Odile: You asked me to keep them from you until you had earned them. I decided you had.
+> odile_hub
+
+=== odile_quorum
+@ flag:ask_quorum
+Odile: The Cradle will not open for one hand. It needs a quorum of the tags. Six of the eleven.
+Odile: The tags of the people you woke. Yours does not count. It never did.
+> odile_hub
+
+=== odile_leave
+Odile: Then go. The lamp will be lit.
+
+=== echo_Director Log 2
+~ You read the page and the room tilts. A long table. Eleven chairs. A pen that is not shaking, which is the worst thing about it.
+Director: It is not a question of whether. It is a question of which. We will not choose the ones who deserve it. We will choose the ones who can be trusted to forget.
+~ Someone says your name. You do not look up.
+
+=== echo_Director Log 3
+~ A tape recorder, a window with the blinds down, the sound of a city that has not yet been told.
+Director: Log three. The reserve is smaller than projected. The Rest will not fit. Someone must decide who the Rest are. I have been asked to decide.
+Director: I have decided to let the system decide. That is also a decision. I would like it on the record that I knew that.
+
+=== listener_gate
+~ Three Listeners stand in front of a boarded door. They do not look at you. They look at a point just past your left shoulder, where a voice would be.
+Listener: The door is closed to the one who carries the tags. Say why we should open it.
+* [Memory 3] "I remember the table. I signed." => listener_confess | if flag:lamplighter_done
+* "I am not here for the Cradle. I want the tags returned to their owners." => listener_mercy | if rep.listeners>=2
+* [Lie] "The broadcast told me to come." => listener_liewin | if rep.listeners>=1
+* [Lie] "The broadcast told me to come." => listener_lielose | if rep.listeners<1
+* "Stand aside." => listener_fight
+* "Not yet." => listener_leave
+
+=== listener_confess
+@ rep.listeners+1; flag:chapel_open; openchapel; log:You told the Listeners the truth and they let you in; event:chapel:open
+Listener: ...Then you are the one it names. Come in. We will not stop you. We will not help you.
+
+=== listener_mercy
+@ rep.listeners+1; flag:chapel_open; openchapel; log:You told the Listeners you would return the tags and they let you in; event:chapel:open
+Listener: Returned. Yes. That is a good lie, if it is a lie. Go.
+
+=== listener_liewin
+@ flag:chapel_open; openchapel; log:You lied to the Listeners and they believed you; event:chapel:open
+Listener: It spoke to you. It does not speak to people who are not ready. Go on.
+~ You are fairly sure that was the wrong thing for them to believe.
+
+=== listener_lielose
+Listener: The broadcast says nothing to the people who carry it. We know it. We have listened for a long time.
+> listener_fight
+
+=== listener_fight
+@ rep.listeners-2; flag:chapel_open; chapelfight; log:You fought your way through Chapel Row; event:chapel:open
+Listener: Then the voice was right about you.
+
+=== listener_leave
+Listener: We will be here.
+
+=== term_saltmere
+~ A harbour authority terminal, screen salt-crusted, running on a dead battery that has not yet been told.
+~ SALTMERE HARBOUR AUTHORITY. TIDE LOG.
+~ High water came twice a day for sixty years. Then three times. Then it stopped going out at night.
+~ Harbourmaster's note: the new people at the breakwater say the water is not our problem. The water would like a word.
+
+=== term_console_short
+@ tagtoast
+~ A console in a dead antechamber. The screen wakes at your touch.
+~ ANTECHAMBER ACCESS. CRADLE PRIMARY DOOR.
+~ QUORUM REQUIRED: 6 OF 11. NOT MET.
+~ The console does not say what happens if you try anyway. It does not need to.
+
+=== term_console_ok
+@ tagtoast; flag:chapter_two_done; event:console:read; xp:300; log:You reached the Cradle door and heard a message from yourself
+~ ANTECHAMBER ACCESS. CRADLE PRIMARY DOOR.
+~ QUORUM MET. WAKE QUORUM 6 OF 11. PROJECTED LOSS ON A PARTIAL WAKE: 41 PERCENT.
+~ A second line, in a typeface you recognise because you chose it: FINAL AUTHORISATION REQUIRES DIRECTOR OVERRIDE.
+~ The console clicks. A recording starts. It is your voice, and it is very tired.
+You: If you are hearing this, you have reached the door, and you have more tags than I expected. Do not open it. Not yet.
+You: Go home. Ask Marta what is in the case. She will pretend not to know. She knows.
+~ The recording ends. The door does not move. Somewhere behind it, three thousand people go on breathing.

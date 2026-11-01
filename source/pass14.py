@@ -1,0 +1,5 @@
+# ---- pass 14: the dark pass ----
+sub1("  ctx.drawImage(groundCv, 0, 0);\n", "  ctx.drawImage(groundCv, 0, 0);\n  drawBlood(camX, camY, vw, vh);\n")
+sub1("const pw = 560, ph = 560, px = Math.round(w / 2 - pw / 2), py = Math.max(46, Math.round(h / 2 - ph / 2));", "const pw = 560, ph = 640, px = Math.round(w / 2 - pw / 2), py = Math.max(8, Math.round(h / 2 - ph / 2));")
+sub1("(DIFFS[settings.diff] || DIFFS.normal).label, () => { cycleDiff(); }, true); y += 42;", "(DIFFS[settings.diff] || DIFFS.normal).label, () => { cycleDiff(); }, true); y += 42;\n  toggleRow(x, y, rw, 'Gore', 'Blood, bodies and gibs. Full is the default.', ({ off: 'Off', some: 'Some', full: 'Full' })[gore()] + '   (click to change)', () => { settings.gore = gore() === 'full' ? 'some' : gore() === 'some' ? 'off' : 'full'; saveSettings(); }, gore() !== 'off'); y += 42;\n  toggleRow(x, y, rw, 'Washed-out palette', 'Drains the colour a little. Turn it off for the original look.', settings.grim ? 'On' : 'Off', () => { settings.grim = !settings.grim; saveSettings(); }, !!settings.grim); y += 42;")
+src = src.replace(marker_end, P('ab_dark.js') + marker_end, 1)
