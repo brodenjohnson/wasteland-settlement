@@ -9361,13 +9361,13 @@ const MATS = new Set(['Wood', 'Scrap', 'Stone', 'Cloth', 'Iron ore', 'Metal plat
 const isFood = n => !!(ITEM_USE[n] && (ITEM_USE[n].food || ITEM_USE[n].water)), isFarm = n => FARM_PRODUCE.has(n) || ['Milk', 'Roach Egg', 'Raw Meat', 'Hide', 'Cheese'].includes(n) || !!CROPS[n];
 const VENDORS = {
   general: { buys: n => MATS.has(n), list: (rs, rep) => [['Wood', 30], ['Scrap', 30], ['Stone', 24], ['Cloth', 16], ['Empty Bottle', 8], ['Canned food', 6], ['Bandage', 6], ['Pistol rounds', 20], ['Rusty Hatchet', 1], ['Rusty Pick', 1], ['Hoe', 1], ['Watering Can', 1], ['Fishing Rod', 1], ['Large Watering Can', 1]] },
-  armoury: { buys: n => !!WEAPONS[n], list: (rs, rep) => [...pick(rs, WP, 9).map(n => [n, 1]), ...(rep >= 3 ? pickN(rs, WPH, 3).map(n => [n, 1]) : []), ['Pistol rounds', 30], ['Shells', 20], ['Bolts', 20]] },
+  armoury: { buys: n => !!WEAPONS[n], list: (rs, rep) => [...pickN(rs, WP, 9).map(n => [n, 1]), ...(rep >= 3 ? pickN(rs, WPH, 3).map(n => [n, 1]) : []), ['Pistol rounds', 30], ['Shells', 20], ['Bolts', 20]] },
   armourer: { buys: n => !!ARMOUR[n], list: (rs, rep) => { const sets = ['raider', 'patch', 'scav', 'metal', 'riot'].concat(rep >= 2 ? ['bone', 'haz'] : [], rep >= 4 ? ['cap', 'combat'] : []); const out = []; for (const s of pickN(rs, sets, 3)) for (const p of SETS[s]) out.push([p, 1]); return out.concat([['Skull Necklace', 1], ['Geiger Band', 1], ['Lead Pendant', 1], ['Runner Wraps', 1], ['Raider Totem', 1]].filter(() => rs() < 0.5)); } },
   apothecary: { buys: n => ['Healroot', 'Glowmelon', 'Bandage', 'Medkit', 'Rad-Away', 'Rad tabs', 'Beast Tonic', 'Healroot Tonic', 'Melon Juice'].includes(n), list: () => [['Bandage', 12], ['Medkit', 4], ['Rad-Away', 6], ['Rad tabs', 10], ['Beast Tonic', 4], ['Healroot Tonic', 3], ['Melon Juice', 3], ['Purified Water', 8], ['Empty Bottle', 10], ['Healroot Seeds', 3]] },
   clinic: { buys: n => ['Bandage', 'Medkit', 'Rad-Away', 'Healroot', 'Healroot Tonic'].includes(n), list: () => [['Bandage', 10], ['Medkit', 3], ['Rad-Away', 5], ['Beast Tonic', 2], ['Healroot Tonic', 2]] },
   stockyard: { buys: n => isFarm(n), list: (rs, rep) => [['Radish Seeds', 10], ['Potato Seeds', 10], ['Tomato Seeds', 8], ['Corn Seeds', 6], ['Bean Seeds', 6], ['Pumpkin Seeds', 4], ['Glowmelon Seeds', 3], ['Healroot Seeds', 2], ['Animal Feed', 20], ['Twohead Calf', 2], ['Roach Hatchling', 4], ['Sapling', 5]] },
   scrapyard: { buys: n => MATS.has(n) || ['Hide'].includes(n), list: (rs, rep) => [['Scrap', 60], ['Metal plate', 10], ['Iron ore', 10], ['Stone', 20]].concat(rep >= 3 ? [['Steel Ingot', 2]] : []) },
-  cantina: { buys: n => isFood(n), list: (rs) => [...pick(rs, ['Roast Meat', 'Cooked Fish', 'Veg Stew', 'Fish Stew', 'Tomato Soup', 'Corn Chowder', 'Pumpkin Stew', 'Cheese', 'Roach Omelette', 'Baked Potato', 'Bean Mash'], 7).map(n => [n, 3]), ['Purified Water', 10], ['Milk', 4]] },
+  cantina: { buys: n => isFood(n), list: (rs) => [...pickN(rs, ['Roast Meat', 'Cooked Fish', 'Veg Stew', 'Fish Stew', 'Tomato Soup', 'Corn Chowder', 'Pumpkin Stew', 'Cheese', 'Roach Omelette', 'Baked Potato', 'Bean Mash'], 7).map(n => [n, 3]), ['Purified Water', 10], ['Milk', 4]] },
   tinkers: { buys: n => !!TOOL_ITEMS[n] || MATS.has(n), list: (rs, rep) => [...Object.keys(BP_ITEMS).filter(k => !state.unlocked.has(BP_ITEMS[k])).map(n => [n, 1]), ['Miners Pick', 1], ['Woodcutter Axe', 1], ['Pressure Can', 1], ['Metal plate', 6], ['Kit: Weapon Bench', 1], ['Kit: Armour Bench', 1]] },
   reclaimers: { buys: n => !!ARMOUR[n] || n === 'Human Skull' || n === 'Iron ore', list: () => [['Rad-Away', 5], ['Gas Mask', 1], ['Geiger Band', 1], ['Hazmat Suit', 1], ['Canned food', 8], ['Empty Bottle', 8], ['Medkit', 2]] },
   guard: { buys: n => !!WEAPONS[n] || n === 'Human Skull', list: (rs, rep) => [...SETS.riot.map(n => [n, 1]), ['Pistol rounds', 40], ['Shells', 30], ['Bolts', 30], ['Medkit', 3]].concat(rep >= 3 ? SETS.combat.map(n => [n, 1]) : []) }
@@ -9472,7 +9472,7 @@ Object.assign(VALUE, { 'Kit: Weapon Bench': 70, 'Kit: Armour Bench': 65, 'Large 
    AN_VERSION: the build number, shown on the title screen, and a check that
    tells players when a newer version has been published.
    ===================================================================== */
-const BUILD = '0.9.1';
+const BUILD = '0.9.2';
 let newerBuild = null, versionCheckT = -999;
 function checkVersion() {
   if (!/^https?:/.test(location.protocol)) return;
@@ -9554,6 +9554,37 @@ function pickImportFile() {
 { const st = QUEST_DEFS.find(q => q.id === 'quorum').steps.find(s => s.id === 'chapel'), o = st.check; st.check = () => o() || qf('console:read'); }
 
 Object.assign(DBG, { exportData, exportChar, importText });
+/* =====================================================================
+   AP_WIKI: hands the game's data tables to wiki.py, which builds the player
+   wiki from them, so the wiki's numbers always match the build. Nothing in
+   the game calls this.
+   ===================================================================== */
+function wikiData() {
+  const plain = v => JSON.parse(JSON.stringify(v, (k, x) => x instanceof Set ? [...x] : x instanceof Map ? Object.fromEntries(x) : typeof x === 'function' ? undefined : x));
+  const T = { CONFIG, RES, ITEM_USE, TOOL_ITEMS, STATION_NAMES, BLUEPRINTS, BP_ITEMS, WEAPONS, ARMOUR, SLOT_NAMES, CROPS, ITEM_DESC, ENEMY_TYPES, DROPS, STRUCT_HP, CRAFT_TABS, RECIPES,
+    ZONE_NAMES, SPAWN_DEFS, TIER_NAME, ITEM_TIER, JOBS, SURVIVOR_DEFS, SKILL_ORDER, VALUE, TIER_NAMES, RECIPE_DESC, QUEST_DEFS, DIFFS, CREATURE_LORE, PLACE_LORE, STORY_ITEMS,
+    BUFFS, FOOD_BUFFS, SL_NAMES, SL_REQ, RAID_KINDS, BIO2, SURV_QUESTS, CAMP_RADII, LVL_OFF, DUNGEONS, FARM_PRODUCE, COOKED, ANIMALS, ROSTER, SETS, MISSIONS, HB, SKULL_FOES,
+    SKILLS: Object.fromEntries(Object.entries(SKILLS).map(([k, s]) => [k, { name: s.name, blurb: s.blurb, perks: [1, 2, 4, 6, 8, 10].map(l => [l, s.perk ? s.perk(l) : '']) }])),
+    MAPDEFS: Object.fromEntries(Object.entries(MAPDEFS).map(([k, m]) => [k, { id: m.id, name: m.name, theme: m.theme, zone: m.zone, rad: m.rad, mobs: m.mobs, boss: m.boss }])) };
+  const out = {}; for (const k in T) out[k] = plain(T[k]);
+  const names = new Set([...Object.keys(VALUE), ...Object.keys(BP_ITEMS), ...Object.keys(ITEM_DESC), ...Object.keys(WEAPONS), ...Object.keys(ARMOUR)]);
+  for (const r of RECIPES) for (const n in (r.gives || {})) names.add(n);
+  out.VALUES = {}; out.HULL_PRICE = {};
+  for (const n of names) { out.VALUES[n] = itemValue(n); out.HULL_PRICE[n] = Math.max(2, Math.ceil(itemValue(n) * 1.6 * (BP_ITEMS[n] ? 2.2 : 1))); }
+  // every item a vendor can stock, and the lowest Hull reputation that unlocks it
+  out.VENDOR_STOCK = {};
+  for (const k in VENDORS) {
+    const seen = {};
+    for (const rep of [-5, 0, 1, 2, 3, 4, 5, 10]) for (let s = 1; s <= 40; s++) { const rs = mulb(s * 7919 + rep); for (const [n] of VENDORS[k].list(rs, rep)) if (seen[n] === undefined || rep < seen[n]) seen[n] = rep; }
+    out.VENDOR_STOCK[k] = seen;
+  }
+  return out;
+}
+{ const o = drawTitle; drawTitle = function (w, h) {
+  o(w, h);
+  if (settings.cwSeen && !state.creating && !state.settingsOpen && !state.charsOpen) button(w - 150, h - 46, 130, 28, 'Player wiki', () => window.open('wiki/index.html', '_blank'));
+}; }
+Object.assign(DBG, { wikiData, stockFor });
 let last = performance.now();
 function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000);

@@ -8,6 +8,7 @@ Read this file, then `docs/HANDOFF.md` (current state, open questions, the Chapt
 ## How we work
 - Australian English. Plain, a little dry. No emojis. No em dashes. Never "genuinely" or "honestly". Challenge dilution and overextension: if a request spreads the project thin, say so and suggest an order.
 - Build in tested increments. After each feature, run the regression list, then publish. Say plainly what you did not do.
+- The player wiki is part of every feature. Numbers regenerate from the game, but prose does not: when you add a mechanic, place, person, vendor or item type, update the matching page in `wiki_pages/` (and add a generated block if it is data). The wiki is spoiler-free by Broden's decision: no story items, documents, main-story quests or twist characters. `STORY_ITEMS` and `STORY_QUESTS` in `wiki.py` filter these; extend them when the story grows.
 - Broden decides direction. Claude may reorder the roadmap and overrule suggestions where it has a good reason, and says why.
 
 ## Layout (this folder is `source/` inside the repo)
@@ -15,6 +16,7 @@ Read this file, then `docs/HANDOFF.md` (current state, open questions, the Chapt
 - `parts/*.js`: feature modules. Files are named in roughly build order (`a_` to `z_`, then `aa_` to `an_`). `parts/dialogue.txt` is the story script.
 - `pass4.py` ... `pass18.py`: patch scripts applied by `assemble.py`. Each pass uses `sub1(old, new)` to replace an exact string in the assembled source (it fails loudly if the string is not found) and inserts modules before `marker_end`.
 - `assemble.py` builds `game_new.js`. `build.py` wraps it into `game_new.html` and stamps the version. `release.py` does both and writes `../index.html` and `../version.json`.
+- `wiki.py` builds the player wiki into `../wiki/` (GitHub Pages serves it at `/wiki/`). It loads the built game, reads `__g.wikiData()` (`parts/ap_wiki.js`), and fills the page fragments in `wiki_pages/`, where `<!-- gen:name -->` marks a generated table. `release.py` runs it.
 - `tests/`: Playwright tests. `python3 tests/run.py regression` runs the regression list. See below.
 
 ## Build
@@ -63,7 +65,7 @@ Tests are small scripts run by `tests/shot.py` with `LEGACY=1` (creates a charac
 GitHub Pages serves `index.html` from the repo root. The title screen shows the build and tells players when `version.json` is newer than their build.
 
 ## Roadmap (Broden's decisions)
-Done: core game, saves, maps, dialogue, dark pass, the Kind Stranger and Varro, the Hollowclaw and Deepcut, the Tidewrack (Chapter Two), farming and livestock, arsenal and gear art, the Hull town, save export and import (`parts/ao_saveio.js`, pass 19).
+Done: core game, saves, maps, dialogue, dark pass, the Kind Stranger and Varro, the Hollowclaw and Deepcut, the Tidewrack (Chapter Two), farming and livestock, arsenal and gear art, the Hull town, save export and import (`parts/ao_saveio.js`, pass 19), the player wiki (0.9.2).
 Next, in a likely order:
 1. **Chapter Three**: Marta's case and the long table. The Tidewrack console tells the player: "Go home. Ask Marta what is in the case." Priya answers the radio. The Cantor appears as antagonist.
 2. **Faction layer** for the Hull: guild membership with ranks, rep-gated quests, a bounty board at the Guard HQ. The Archive and the Pit are shuttered buildings waiting for content.

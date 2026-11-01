@@ -7,7 +7,7 @@ A test passes when its last line is 'ERRORS: none'. Some tests print their own r
 import os, subprocess, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
 HTML = os.path.join(ROOT, 'game_new.html'); OUT = os.path.join(ROOT, 'out'); os.makedirs(OUT, exist_ok=True)
-REGRESSION = 't51 t52 t54 t62 t74 t92 t93 t94 t95 t96 t97 t98 t120 t122 t130 t141 t150 t152 t160 t171 t180 t212 t151 t173 t201 t220 t100 t123 t250'.split()
+REGRESSION = 't51 t52 t54 t62 t74 t92 t93 t94 t95 t96 t97 t98 t120 t122 t130 t141 t150 t152 t160 t171 t180 t212 t151 t173 t201 t220 t100 t123 t250 t251'.split()
 names = REGRESSION if sys.argv[1:] == ['regression'] else sys.argv[1:]
 NO_LEGACY = {'t123'}  # these create their own character, so the LEGACY setup gets in the way
 for n in names:

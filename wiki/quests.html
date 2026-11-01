@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quests</title><meta name="description" content="Early goals, the survivors&#x27; favours and Hull jobs. The main story is left out.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>:root { --bg: #120e14; --panel: #1f1622; --panel2: #2a1e2e; --line: #3d2f40; --text: #e8dcc0; --dim: #a89880; --head: #ffe9b0; --accent: #ffd36b; --link: #f0b860; --good: #7fbf7f; }
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: var(--accent); }
+h1, h2, h3, .brand { font-family: "Pixelify Sans", ui-monospace, Menlo, Consolas, monospace; color: var(--head); font-weight: 600; line-height: 1.25; }
+h1 { font-size: 2rem; margin: 0 0 .25rem; }
+h2 { font-size: 1.4rem; margin: 2.2rem 0 .6rem; padding-bottom: .3rem; border-bottom: 1px solid var(--line); }
+h3 { font-size: 1.12rem; margin: 1.4rem 0 .5rem; }
+p { margin: .5rem 0 .9rem; } ul, ol { padding-left: 1.3rem; } li { margin: .2rem 0; }
+header { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 1rem; padding: .7rem 1rem; background: rgba(18,14,20,.94); border-bottom: 1px solid var(--line); backdrop-filter: blur(4px); }
+.brand { text-decoration: none; font-size: 1.15rem; } .brand span { color: var(--accent); }
+.play { margin-left: auto; white-space: nowrap; font-size: .9rem; padding: .3rem .7rem; border: 1px solid var(--good); color: var(--good); text-decoration: none; border-radius: 3px; }
+.menu { display: none; font: inherit; font-size: .9rem; background: var(--panel2); color: var(--text); border: 1px solid var(--line); padding: .3rem .7rem; border-radius: 3px; }
+.wrap { display: grid; grid-template-columns: 210px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+nav { position: sticky; top: 56px; align-self: start; padding: 1.2rem 1rem; display: flex; flex-direction: column; gap: .15rem; max-height: calc(100vh - 56px); overflow-y: auto; }
+nav a { text-decoration: none; color: var(--dim); padding: .25rem .5rem; border-left: 2px solid transparent; }
+nav a:hover { color: var(--text); } nav a[aria-current] { color: var(--head); border-left-color: var(--accent); background: var(--panel); }
+main { padding: 1.6rem 1.5rem 3rem; min-width: 0; }
+.blurb { color: var(--dim); font-size: 1.05rem; margin-top: 0; }
+.dim { color: var(--dim); font-size: .85em; }
+.tw { overflow-x: auto; margin: .6rem 0 1.2rem; border: 1px solid var(--line); border-radius: 4px; }
+table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: .9rem; }
+table.kv { min-width: 0; }
+th, td { padding: .45rem .65rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+th { background: var(--panel2); color: var(--head); font-weight: 600; white-space: nowrap; position: sticky; top: 0; }
+tbody tr:nth-child(even) { background: rgba(255,255,255,.02); } tbody tr:target, section:target { outline: 2px solid var(--accent); outline-offset: -2px; }
+table.kv td:first-child { color: var(--dim); width: 40%; } table.kv thead { display: none; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: .3rem 1rem .4rem; margin: 1rem 0; }
+.card .tw { margin: .4rem 0 .8rem; }
+.lore { font-style: italic; color: #d8c8a8; }
+.note { background: var(--panel2); border-left: 3px solid var(--accent); padding: .6rem .9rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+kbd { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .85em; background: var(--panel2); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3px; padding: .05rem .35rem; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: .8rem; margin: 1rem 0; }
+.tiles a { display: block; background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: .8rem 1rem; text-decoration: none; color: var(--text); }
+.tiles a:hover { border-color: var(--accent); } .tiles b { display: block; font-family: "Pixelify Sans", monospace; color: var(--head); font-size: 1.05rem; } .tiles span { color: var(--dim); font-size: .9rem; }
+#search { width: 100%; font: inherit; padding: .7rem .9rem; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 5px; }
+#search:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+#results { list-style: none; padding: 0; margin: .4rem 0 0; } #results li { padding: .35rem .2rem; border-bottom: 1px solid var(--line); } #results small { color: var(--dim); margin-left: .5rem; }
+footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--dim); font-size: .85rem; }
+@media (max-width: 760px) {
+  .wrap { grid-template-columns: 1fr; }
+  .menu { display: inline-block; } .play { margin-left: auto; } .brand { font-size: 1rem; } header { gap: .6rem; }
+  nav { display: none; position: static; max-height: none; border-bottom: 1px solid var(--line); padding: .6rem 1rem; }
+  body.navopen nav { display: flex; }
+  main { padding: 1.2rem 1rem 2.5rem; } h1 { font-size: 1.6rem; }
+}
+</style></head>
+<body><header><a class="brand" href="index.html">Wasteland Settlement <span>Wiki</span></a><a class="play" href="../index.html">Play the game</a>
+<button class="menu" aria-expanded="false" aria-controls="nav" onclick="document.body.classList.toggle('navopen');this.setAttribute('aria-expanded',document.body.classList.contains('navopen'))">Pages</button></header>
+<div class="wrap"><nav id="nav"><a href="index.html">Home</a><a href="getting-started.html">Getting started</a><a href="survival.html">Survival</a><a href="settlement.html">Your settlement</a><a href="skills.html">Skills</a><a href="crafting.html">Crafting</a><a href="weapons.html">Weapons</a><a href="armour.html">Armour</a><a href="items.html">Items</a><a href="farming.html">Farming, cooking and livestock</a><a href="creatures.html">Creatures and bosses</a><a href="places.html">Places</a><a href="the-hull.html">The Hull</a><a href="people.html">People</a><a href="quests.html" aria-current="page">Quests</a><a href="whats-new.html">What is new</a></nav><main><h1>Quests</h1><p class="blurb">Early goals, the survivors&#x27; favours and Hull jobs. The main story is left out.</p><p>Your journal (<kbd>J</kbd>) lists every active quest with its next step, and a marker on the screen points the way where it can. You can pin one quest to keep it in view.</p>
+<p>The main story starts with the note in your pocket. It is not covered here, so it stays yours to find.</p>
+<h2 id="early-goals">Early goals</h2>
+<p>These teach the basics and set you up for the long haul.</p>
+<section class="card" id="q-welcome"><h3>A Roof and a Fire</h3><p class="lore">The valley is quiet, for now. Get a foothold: a bench to work at, tools in your hands, a bed and a place to keep your things, and food growing in the dirt. Then go and find someone else still alive.</p><ol><li>Place your bedroll where you want to live. The ground around it becomes safe</li><li>Gather 10 wood and 6 scrap</li><li>Build a Workbench (C, Build tab)</li><li>Craft a Rusty Hatchet</li><li>Craft a Hoe and a Watering Can</li><li>Till some soil and plant a seed</li><li>Build a Bunk Bed and a Storage Chest</li><li>Find a survivor and bring them home</li></ol><p><b>Reward:</b> 60 XP, <a href="items.html#canned-food">Canned food</a> x3, <a href="items.html#bandage">Bandage</a> x2</p></section><section class="card" id="q-water"><h3>Clean Water</h3><p class="lore">Every drop out here carries something. The valley pond is the cleanest you will find, and a purifier beside it makes it cleaner still.</p><ol><li>Unlock the forge (blueprint, or Crafting level 3)</li><li>Build a Water Purifier beside the pond</li><li>Fill a bottle at the purifier</li></ol><p><b>Reward:</b> 45 XP, <a href="items.html#empty-bottle">Empty Bottle</a> x4</p></section><section class="card" id="q-mouths"><h3>Mouths to Feed</h3><p class="lore">Settlers will eat what is in the chest, and they work better when fed. Fish the pond, and learn what a campfire is for.</p><ol><li>Craft a Fishing Rod</li><li>Catch a fish</li><li>Cook something at a campfire</li><li>Watch a settler eat from the chest</li></ol><p><b>Reward:</b> 50 XP, <a href="farming.html#potato-seeds">Potato Seeds</a> x4, <a href="farming.html#tomato-seeds">Tomato Seeds</a> x4</p></section><section class="card" id="q-hold"><h3>Hold the Gate</h3><p class="lore">Raiders will come through the valley gates. Make them regret it.</p><ol><li>Build 8 wall pieces</li><li>Build a Gate</li><li>Build a Guard Post</li><li>Survive a raid</li></ol><p><b>Reward:</b> 90 XP, <a href="items.html#pistol-rounds">Pistol rounds</a> x8, <a href="items.html#scrap">Scrap</a> x10</p></section><section class="card" id="q-trade"><h3>Something to Sell</h3><p class="lore">Merchants wander the wastes. Find one, and learn what your spare scrap is worth.</p><ol><li>Meet a travelling merchant</li><li>Sell something to them</li><li>Buy something from them</li></ol><p><b>Reward:</b> 60 XP, <a href="items.html#caps">Caps</a> x50</p></section><section class="card" id="q-explore"><h3>Beyond the Gates</h3><p class="lore">The valley is small. See some of what lies outside it.</p><ol><li>Visit 3 different regions</li><li>Open a supply crate in the wild</li></ol><p><b>Reward:</b> 70 XP, <a href="items.html#rad-away">Rad-Away</a>, <a href="items.html#cloth">Cloth</a> x6</p></section>
+<h2 id="survivors-favours">Survivors' favours</h2>
+<p>Each of the ten survivors has a favour. They are listed with the survivor on the <a href="people.html">People</a> page.</p>
+<h2 id="hull-jobs">Hull jobs</h2>
+<p>See <a href="the-hull.html#the-job-board">the job board</a>.</p>
+<div class="tw"><table class=""><thead><tr><th>Job</th><th>What it asks</th><th>Reward</th></tr></thead><tbody><tr id="bm_rats"><td><b>Rats in the Hold</b></td><td>Clear eight glowrats out of the cargo hold.</td><td>80 XP, <a href="items.html#caps">Caps</a> x60, <a href="items.html#bandage">Bandage</a> x3</td></tr><tr id="bm_water"><td><b>Water Run</b></td><td>The tank is low. Eight bottles of purified water.</td><td>70 XP, <a href="items.html#caps">Caps</a> x70</td></tr><tr id="bm_brute"><td><b>A Brute at the Wall</b></td><td>Something large keeps testing the wall. Put it down.</td><td>110 XP, <a href="items.html#caps">Caps</a> x90, <a href="items.html#metal-plate">Metal plate</a> x4</td></tr><tr id="bm_dairy"><td><b>Milk and Eggs</b></td><td>The cantina wants four milk and three roach eggs.</td><td>90 XP, <a href="items.html#caps">Caps</a> x110, <a href="farming.html#beast-tonic">Beast Tonic</a> x2</td></tr><tr id="bm_bones"><td><b>Bones for the Gate</b></td><td>The wall needs three skulls on pikes. People notice that.</td><td>70 XP, <a href="items.html#caps">Caps</a> x50, <a href="armour.html#skull-necklace">Skull Necklace</a></td></tr><tr id="bm_scout"><td><b>Scout the Deepcut</b></td><td>We lost a survey crew in the Deepcut mine. Go and look.</td><td>130 XP, <a href="items.html#caps">Caps</a> x100, <a href="items.html#metal-plate">Metal plate</a> x6</td></tr></tbody></table></div>
+
+<footer>Written for version 0.9.2. Numbers on these pages come straight from the game, so they match the build. No story spoilers.</footer></main></div>
+<script src="search.js"></script></body></html>

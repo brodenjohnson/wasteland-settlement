@@ -36,6 +36,9 @@ Questions for Broden before building: what is in the case; whether the Cantor is
 - Save export and import is in (0.9.1). Tell friends to export before big updates.
 - Saves are per browser. Every update must keep older saves loading, and say so when it cannot.
 
+## The player wiki
+At `/wiki/` on GitHub Pages, built by `wiki.py` on every release. Spoiler-free by Broden's decision. Keep its prose in `wiki_pages/` current as features land.
+
 ## Where things live outside this repo
 - The full story bible was a Claude Doc in claude.ai. It is now in `docs/STORY_BIBLE.md` (transcribed from the PDF export, 2026-11-01), and this repo is the source of truth for the story.
 - Earlier chat transcripts exist but are not needed. This handoff and the code carry what matters.

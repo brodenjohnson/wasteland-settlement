@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Survival</title><meta name="description" content="Health, hunger, thirst and radiation, how to heal, meal buffs and difficulty.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>:root { --bg: #120e14; --panel: #1f1622; --panel2: #2a1e2e; --line: #3d2f40; --text: #e8dcc0; --dim: #a89880; --head: #ffe9b0; --accent: #ffd36b; --link: #f0b860; --good: #7fbf7f; }
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: var(--accent); }
+h1, h2, h3, .brand { font-family: "Pixelify Sans", ui-monospace, Menlo, Consolas, monospace; color: var(--head); font-weight: 600; line-height: 1.25; }
+h1 { font-size: 2rem; margin: 0 0 .25rem; }
+h2 { font-size: 1.4rem; margin: 2.2rem 0 .6rem; padding-bottom: .3rem; border-bottom: 1px solid var(--line); }
+h3 { font-size: 1.12rem; margin: 1.4rem 0 .5rem; }
+p { margin: .5rem 0 .9rem; } ul, ol { padding-left: 1.3rem; } li { margin: .2rem 0; }
+header { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 1rem; padding: .7rem 1rem; background: rgba(18,14,20,.94); border-bottom: 1px solid var(--line); backdrop-filter: blur(4px); }
+.brand { text-decoration: none; font-size: 1.15rem; } .brand span { color: var(--accent); }
+.play { margin-left: auto; white-space: nowrap; font-size: .9rem; padding: .3rem .7rem; border: 1px solid var(--good); color: var(--good); text-decoration: none; border-radius: 3px; }
+.menu { display: none; font: inherit; font-size: .9rem; background: var(--panel2); color: var(--text); border: 1px solid var(--line); padding: .3rem .7rem; border-radius: 3px; }
+.wrap { display: grid; grid-template-columns: 210px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+nav { position: sticky; top: 56px; align-self: start; padding: 1.2rem 1rem; display: flex; flex-direction: column; gap: .15rem; max-height: calc(100vh - 56px); overflow-y: auto; }
+nav a { text-decoration: none; color: var(--dim); padding: .25rem .5rem; border-left: 2px solid transparent; }
+nav a:hover { color: var(--text); } nav a[aria-current] { color: var(--head); border-left-color: var(--accent); background: var(--panel); }
+main { padding: 1.6rem 1.5rem 3rem; min-width: 0; }
+.blurb { color: var(--dim); font-size: 1.05rem; margin-top: 0; }
+.dim { color: var(--dim); font-size: .85em; }
+.tw { overflow-x: auto; margin: .6rem 0 1.2rem; border: 1px solid var(--line); border-radius: 4px; }
+table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: .9rem; }
+table.kv { min-width: 0; }
+th, td { padding: .45rem .65rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+th { background: var(--panel2); color: var(--head); font-weight: 600; white-space: nowrap; position: sticky; top: 0; }
+tbody tr:nth-child(even) { background: rgba(255,255,255,.02); } tbody tr:target, section:target { outline: 2px solid var(--accent); outline-offset: -2px; }
+table.kv td:first-child { color: var(--dim); width: 40%; } table.kv thead { display: none; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: .3rem 1rem .4rem; margin: 1rem 0; }
+.card .tw { margin: .4rem 0 .8rem; }
+.lore { font-style: italic; color: #d8c8a8; }
+.note { background: var(--panel2); border-left: 3px solid var(--accent); padding: .6rem .9rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+kbd { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .85em; background: var(--panel2); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3px; padding: .05rem .35rem; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: .8rem; margin: 1rem 0; }
+.tiles a { display: block; background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: .8rem 1rem; text-decoration: none; color: var(--text); }
+.tiles a:hover { border-color: var(--accent); } .tiles b { display: block; font-family: "Pixelify Sans", monospace; color: var(--head); font-size: 1.05rem; } .tiles span { color: var(--dim); font-size: .9rem; }
+#search { width: 100%; font: inherit; padding: .7rem .9rem; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 5px; }
+#search:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+#results { list-style: none; padding: 0; margin: .4rem 0 0; } #results li { padding: .35rem .2rem; border-bottom: 1px solid var(--line); } #results small { color: var(--dim); margin-left: .5rem; }
+footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--dim); font-size: .85rem; }
+@media (max-width: 760px) {
+  .wrap { grid-template-columns: 1fr; }
+  .menu { display: inline-block; } .play { margin-left: auto; } .brand { font-size: 1rem; } header { gap: .6rem; }
+  nav { display: none; position: static; max-height: none; border-bottom: 1px solid var(--line); padding: .6rem 1rem; }
+  body.navopen nav { display: flex; }
+  main { padding: 1.2rem 1rem 2.5rem; } h1 { font-size: 1.6rem; }
+}
+</style></head>
+<body><header><a class="brand" href="index.html">Wasteland Settlement <span>Wiki</span></a><a class="play" href="../index.html">Play the game</a>
+<button class="menu" aria-expanded="false" aria-controls="nav" onclick="document.body.classList.toggle('navopen');this.setAttribute('aria-expanded',document.body.classList.contains('navopen'))">Pages</button></header>
+<div class="wrap"><nav id="nav"><a href="index.html">Home</a><a href="getting-started.html">Getting started</a><a href="survival.html" aria-current="page">Survival</a><a href="settlement.html">Your settlement</a><a href="skills.html">Skills</a><a href="crafting.html">Crafting</a><a href="weapons.html">Weapons</a><a href="armour.html">Armour</a><a href="items.html">Items</a><a href="farming.html">Farming, cooking and livestock</a><a href="creatures.html">Creatures and bosses</a><a href="places.html">Places</a><a href="the-hull.html">The Hull</a><a href="people.html">People</a><a href="quests.html">Quests</a><a href="whats-new.html">What is new</a></nav><main><h1>Survival</h1><p class="blurb">Health, hunger, thirst and radiation, how to heal, meal buffs and difficulty.</p><h2 id="the-four-bars">The four bars</h2>
+<ul>
+<li><b>Health.</b> You heal slowly on your own while you are fed and watered. Bandages, medkits and some food heal faster.</li>
+<li><b>Hunger</b> and <b>thirst</b> drain all the time. At zero you start losing health. Thirst drains faster than hunger.</li>
+<li><b>Radiation</b> builds up out in the Wastes, faster in ruins and on the shore, and from drinking dirty water. While it is high it eats your health. The ground around your bedroll is clean and slowly draws it back out of you.</li>
+</ul>
+<div class="tw"><table class="kv"><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>A full day</td><td>5 real minutes (24 game hours)</td></tr><tr><td>Hunger drain</td><td>2.5 per game hour</td></tr><tr><td>Thirst drain</td><td>4 per game hour</td></tr><tr><td>Starving</td><td>1.2 health a second</td></tr><tr><td>Dehydrated</td><td>1.8 health a second</td></tr><tr><td>Healing on your own</td><td>0.6 health a second while hunger and thirst are above 30</td></tr><tr><td>A drink</td><td>+25 thirst</td></tr><tr><td>Max level</td><td>10</td></tr><tr><td>Per level</td><td>+3 max health, +2% damage</td></tr><tr><td>Damage resistance cap</td><td>80%</td></tr><tr><td>Radiation resistance cap</td><td>90%</td></tr><tr><td>Bag</td><td>36 slots, stacks of up to 50, 9 on the hotbar</td></tr></tbody></table></div>
+
+<h2 id="water">Water</h2>
+<p>Open water fills you up but gives you a good dose of radiation. The spring in Home Valley is cleaner. A <b>Water Purifier</b> has to be built right beside water and fills empty bottles with purified water, which is close to clean. Purified water also feeds sprinklers through pipes (see <a href="farming.html#irrigation">irrigation</a>).</p>
+
+<h2 id="healing-and-radiation">Healing and radiation</h2>
+<div class="tw"><table class=""><thead><tr><th>Item</th><th>Effect</th></tr></thead><tbody><tr><td><a href="farming.html#baked-potato">Baked Potato</a></td><td>+3 health, +38 hunger</td></tr><tr><td><a href="items.html#bandage">Bandage</a></td><td>+25 health</td></tr><tr><td><a href="farming.html#cooked-fish">Cooked Fish</a></td><td>+4 health, +30 hunger</td></tr><tr><td><a href="farming.html#cooked-glowfish">Cooked Glowfish</a></td><td>+3 health, +3 radiation, +28 hunger</td></tr><tr><td><a href="items.html#dirty-water">Dirty Water</a></td><td>+15 radiation, +30 thirst</td></tr><tr><td><a href="farming.html#fish-stew">Fish Stew</a></td><td>+16 health, +75 hunger</td></tr><tr><td><a href="items.html#fried-roach-egg">Fried Roach Egg</a></td><td>+2 health, +26 hunger</td></tr><tr><td><a href="items.html#glowfish">Glowfish</a></td><td>+12 radiation, +8 hunger</td></tr><tr><td><a href="farming.html#glowmelon">Glowmelon</a></td><td>+5 radiation, +5 hunger, +20 thirst</td></tr><tr><td><a href="items.html#golden-carp">Golden Carp</a></td><td>+3 radiation, +12 hunger</td></tr><tr><td><a href="farming.html#healroot">Healroot</a></td><td>+6 health, +2 hunger</td></tr><tr><td><a href="farming.html#healroot-tonic">Healroot Tonic</a></td><td>+40 health, -25 radiation</td></tr><tr><td><a href="farming.html#meat-stew">Meat Stew</a></td><td>+14 health, +80 hunger</td></tr><tr><td><a href="items.html#medkit">Medkit</a></td><td>+70 health</td></tr><tr><td><a href="farming.html#melon-juice">Melon Juice</a></td><td>-12 radiation, +32 thirst</td></tr><tr><td><a href="farming.html#pumpkin-stew">Pumpkin Stew</a></td><td>+8 health, +74 hunger</td></tr><tr><td><a href="items.html#purified-water">Purified Water</a></td><td>+1 radiation, +45 thirst</td></tr><tr><td><a href="items.html#rad-tabs">Rad tabs</a></td><td>-35 radiation</td></tr><tr><td><a href="items.html#rad-away">Rad-Away</a></td><td>-60 radiation</td></tr><tr><td><a href="items.html#raw-fish">Raw Fish</a></td><td>+5 radiation, +8 hunger</td></tr><tr><td><a href="items.html#raw-meat">Raw Meat</a></td><td>+8 radiation, +14 hunger</td></tr><tr><td><a href="farming.html#roach-egg">Roach Egg</a></td><td>+6 radiation, +10 hunger</td></tr><tr><td><a href="items.html#roach-omelette">Roach Omelette</a></td><td>+4 health, +54 hunger</td></tr><tr><td><a href="farming.html#roast-meat">Roast Meat</a></td><td>+5 health, +38 hunger</td></tr><tr><td><a href="items.html#spring-water">Spring Water</a></td><td>+4 radiation, +35 thirst</td></tr><tr><td><a href="farming.html#tomato-soup">Tomato Soup</a></td><td>+6 health, +40 hunger, +25 thirst</td></tr><tr><td><a href="farming.html#veg-stew">Veg Stew</a></td><td>+12 health, +62 hunger</td></tr></tbody></table></div>
+<p>The Hull Clinic will patch you up for 25 caps or clear your radiation for 35. See <a href="the-hull.html">The Hull</a>.</p>
+
+<h2 id="buffs">Meal buffs</h2>
+<p>Cooked meals give buffs for a while as well as filling you up. The Cooking skill makes them last longer. Times are in real seconds.</p>
+<div class="tw"><table class=""><thead><tr><th>Buff</th><th>Effect</th><th>From</th></tr></thead><tbody><tr id="buff-hearty"><td>Hearty</td><td>+30% stamina recovery</td><td><a href="farming.html#cooked-fish">Cooked Fish</a> (120 s), <a href="farming.html#veg-stew">Veg Stew</a> (240 s), <a href="farming.html#fish-stew">Fish Stew</a> (240 s), <a href="farming.html#corn-chowder">Corn Chowder</a> (300 s), <a href="farming.html#pumpkin-stew">Pumpkin Stew</a> (300 s), <a href="farming.html#dried-fish">Dried Fish</a> (150 s), <a href="farming.html#cheese">Cheese</a> (240 s), <a href="items.html#roach-omelette">Roach Omelette</a> (300 s)</td></tr><tr id="buff-warm"><td>Warm Belly</td><td>tire 25% slower</td><td><a href="farming.html#baked-potato">Baked Potato</a> (150 s), <a href="farming.html#veg-stew">Veg Stew</a> (240 s), <a href="farming.html#bean-mash">Bean Mash</a> (150 s), <a href="farming.html#corn-chowder">Corn Chowder</a> (300 s), <a href="farming.html#jerky">Jerky</a> (180 s), <a href="items.html#roach-omelette">Roach Omelette</a> (200 s)</td></tr><tr id="buff-rush"><td>Sugar Rush</td><td>sprinting costs 25% less, +4% speed</td><td><a href="farming.html#berry-mash">Berry Mash</a> (120 s), <a href="farming.html#roast-corn">Roast Corn</a> (120 s)</td></tr><tr id="buff-ward"><td>Rad Ward</td><td>+25% radiation resistance</td><td><a href="farming.html#cooked-glowfish">Cooked Glowfish</a> (90 s), <a href="farming.html#tomato-soup">Tomato Soup</a> (180 s), <a href="farming.html#melon-juice">Melon Juice</a> (150 s)</td></tr><tr id="buff-broth"><td>Iodine Broth</td><td>+40% radiation resistance, +15% stamina recovery</td><td><a href="farming.html#fish-stew">Fish Stew</a> (300 s), <a href="farming.html#healroot-tonic">Healroot Tonic</a> (150 s)</td></tr><tr id="buff-strong"><td>Strong</td><td>+12% damage</td><td><a href="farming.html#roast-meat">Roast Meat</a> (180 s), <a href="farming.html#meat-stew">Meat Stew</a> (300 s)</td></tr><tr id="buff-mend"><td>Mending</td><td>heal slowly</td><td><a href="farming.html#tomato-soup">Tomato Soup</a> (120 s), <a href="farming.html#meat-stew">Meat Stew</a> (180 s), <a href="farming.html#pumpkin-stew">Pumpkin Stew</a> (200 s), <a href="farming.html#healroot-tonic">Healroot Tonic</a> (180 s)</td></tr><tr id="buff-sweet"><td>Honeyed</td><td>+35% stamina recovery, +5% speed</td><td><a href="farming.html#wild-honey">Wild Honey</a> (240 s)</td></tr></tbody></table></div>
+
+<h2 id="difficulty">Difficulty</h2>
+<p>Change it any time in Settings. Percentages are against Normal.</p>
+<div class="tw"><table class=""><thead><tr><th>Difficulty</th><th>Hunger and thirst</th><th>Raid size</th><th>Radiation</th><th>Enemy toughness</th></tr></thead><tbody><tr><td>Relaxed</td><td>60%</td><td>70%</td><td>70%</td><td>85%</td></tr><tr><td>Normal</td><td>100%</td><td>100%</td><td>100%</td><td>100%</td></tr><tr><td>Harsh</td><td>140%</td><td>140%</td><td>125%</td><td>125%</td></tr></tbody></table></div>
+
+<footer>Written for version 0.9.2. Numbers on these pages come straight from the game, so they match the build. No story spoilers.</footer></main></div>
+<script src="search.js"></script></body></html>
