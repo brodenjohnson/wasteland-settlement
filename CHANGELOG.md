@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.9.3
+- The Hull is safe ground. Nothing ambushes you in town.
+- The Hull has a lot more life in it: rubble and rust along the ship, crates and planters outside the shops, market stalls in the plaza, washing lines between the homes, drum fires that burn at night, a working dock, and grime on every street.
+- Fixed: you could not move after walking into Tinkers' Guildhall, Council Hall, Harbour Guard HQ or the Reclaimers' Lodge.
+- The Hull now sits in the far south-east corner, at the end of a road that runs past the marsh. Reaching the marsh puts it on your map, and travelling merchants will tell you about it.
+- MegaMart moved to the east edge of Fallen City, and Pylon 3 to the north of the Ash Tower, each at the end of a road. Existing saves move them automatically.
+- Rumours can now point you at the places under the Wastes.
+- Hollowclaw Hide is worth something now.
+- The wiki has a picture for every item and creature, says which region each survivor is in, and is now actually online.
+
 ## 0.9.2
 - A player wiki, linked from the title screen: getting started, survival, the settlement, skills, every recipe, weapon, armour piece and item, farming, cooking and livestock, creatures and bosses, places, the Hull and its people, the ten survivors and quests. Numbers come straight from the game. No story spoilers.
 - Fixed: the Armoury and the Rusty Anchor in the Hull could not build their stock, so trading with them failed.

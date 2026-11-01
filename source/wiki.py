@@ -16,7 +16,9 @@ def load_data():
         b = p.chromium.launch(); pg = b.new_page(); errs = []
         pg.on('pageerror', lambda e: errs.append(str(e)))
         pg.goto('file:///' + os.path.join(HERE, 'game_new.html').replace('\\', '/')); pg.wait_for_timeout(1500)
-        d = json.loads(pg.evaluate('JSON.stringify(__g.wikiData())')); b.close()
+        pg.evaluate("__g.newCharacter(); __g.state.creating.name = 'Wiki'; __g.beginGame()"); pg.wait_for_timeout(1500)
+        d = json.loads(pg.evaluate('JSON.stringify(__g.wikiData())'))
+        d['ART'] = json.loads(pg.evaluate('JSON.stringify(__g.wikiArt())')); d['WHERE'] = json.loads(pg.evaluate('JSON.stringify(__g.wikiWhere())')); b.close()
         if errs: raise SystemExit('game errors while loading: ' + '; '.join(errs))
         return d
 
@@ -39,6 +41,16 @@ def table(head, rows, cls=''):
     return '<div class="tw"><table class="%s"><thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>' % (cls, h, b)
 def costs(c): return ', '.join('%s %s' % (q, link(n)) for n, q in c.items()) if c else 'Free'
 def ilist(items): return ', '.join('%s%s' % (link(i['name']), ' x%s' % i['qty'] if i.get('qty', 1) > 1 else '') for i in items if i['name'] not in STORY) or 'None'
+
+# pictures, written out as PNGs next to the pages
+import base64
+IMG = {}
+for kind in ('items', 'creatures'):
+    os.makedirs(os.path.join(OUT, 'img', kind), exist_ok=True)
+    for n, url in D.get('ART', {}).get(kind, {}).items():
+        f = 'img/%s/%s.png' % (kind, slug(n)); open(os.path.join(OUT, f), 'wb').write(base64.b64decode(url.split(',', 1)[1])); IMG[(kind, n)] = f
+def pic(n, kind='items', cls='ic'): f = IMG.get((kind, n)); return '<img class="%s" src="%s" alt="" loading="lazy">' % (cls, f) if f else ''
+def named(n): return '<b>%s%s</b>' % (pic(n), e(n))
 
 # where each item lives in the wiki, so names can link to their entry
 PAGE_OF = {}
@@ -82,7 +94,8 @@ for a in D['ANIMALS'].values():
     if a.get('hide'): add_src('Hide', 'Slaughtering a ' + a['name'])
 for k, dg in D['DUNGEONS'].items():
     if dg.get('reward'): add_src(dg['reward'], 'Found at the end of ' + dg['name'])
-def where(n): return '; '.join(SRC_OF.get(n, [])) or 'Found in the world'
+EXTRA_SRC = {'Shiv': 'Picked up during a side mission'}
+def where(n): return '; '.join(SRC_OF.get(n, [])) or EXTRA_SRC.get(n, 'Found in the world')
 
 # ---------------- generated blocks ----------------
 def g_difficulty():
@@ -151,7 +164,7 @@ def g_weapons(kind):
     for n, w in sorted(W.items(), key=lambda x: x[1]['dmg'] / x[1]['cd']):
         if (w['kind'] == 'melee') != (kind == 'melee'): continue
         extra = ('%d' % w['reach']) if kind == 'melee' else ('%d, %s' % (w['range'], link(w['ammo'])))
-        rows.append((slug(n), ['<b>%s</b>' % e(n), str(w['dmg']), '%ss' % num(w['cd'], 2), '<b>%s</b>' % num(round(w['dmg'] / w['cd'], 1)), extra, tier(n), str(D['VALUES'].get(n, '-')), e(where(n))]))
+        rows.append((slug(n), [named(n), str(w['dmg']), '%ss' % num(w['cd'], 2), '<b>%s</b>' % num(round(w['dmg'] / w['cd'], 1)), extra, tier(n), str(D['VALUES'].get(n, '-')), e(where(n))]))
     return table(['Weapon', 'Damage', 'Swing' if kind == 'melee' else 'Fire rate', 'Damage a second', 'Reach' if kind == 'melee' else 'Range, ammo', 'Grade', 'Value', 'Where to get it'], rows)
 def g_ammo(): return table(['Ammo', 'Used by', 'Value', 'Where to get it'], [(slug(a), [e(a), ', '.join(link(n) for n, w in W.items() if w.get('ammo') == a), str(D['VALUES'].get(a, '-')), e(where(a))]) for a in sorted(AMMO)])
 SET_NAMES = {'raider': 'Raider', 'patch': 'Patchwork', 'scav': 'Scavenger Rig', 'metal': 'Metal', 'riot': 'Riot', 'bone': 'Bone Raider', 'haz': 'Hazmat', 'cap': 'Road Captain', 'combat': 'Combat'}
@@ -166,13 +179,13 @@ def g_armour():
     prow = []
     for k, parts in sets:
         for p in parts:
-            if p in A: prow.append((slug(p), ['<b>%s</b>' % e(p), e(SET_NAMES.get(k, k)), e(D['SLOT_NAMES'][A[p]['slot']]), pct(A[p]['dmg']), pct(A[p].get('rad', 0)), str(D['VALUES'].get(p, '-')), e(where(p))]))
+            if p in A: prow.append((slug(p), [named(p), e(SET_NAMES.get(k, k)), e(D['SLOT_NAMES'][A[p]['slot']]), pct(A[p]['dmg']), pct(A[p].get('rad', 0)), str(D['VALUES'].get(p, '-')), e(where(p))]))
     for p, a in sorted(A.items()):
-        if p not in used: prow.append((slug(p), ['<b>%s</b>' % e(p), '-', e(D['SLOT_NAMES'][a['slot']]), pct(a['dmg']), pct(a.get('rad', 0)), str(D['VALUES'].get(p, '-')), e(where(p))]))
+        if p not in used: prow.append((slug(p), [named(p), '-', e(D['SLOT_NAMES'][a['slot']]), pct(a['dmg']), pct(a.get('rad', 0)), str(D['VALUES'].get(p, '-')), e(where(p))]))
     out.append('<h3>Every piece</h3>' + table(['Piece', 'Set', 'Slot', 'Protection', 'Radiation shield', 'Value', 'Where to get it'], prow))
     return ''.join(out)
 def g_tools():
-    return table(['Tool', 'Type', 'Tier', 'Value', 'Where to get it'], [(slug(n), ['<b>%s</b>' % e(n), e(t['type']), str(t.get('tier', '-')), str(D['VALUES'].get(n, '-')), e(where(n))]) for n, t in sorted(TOOLS.items(), key=lambda x: (x[1]['type'], x[1].get('tier', 0)))])
+    return table(['Tool', 'Type', 'Tier', 'Value', 'Where to get it'], [(slug(n), [named(n), e(t['type']), str(t.get('tier', '-')), str(D['VALUES'].get(n, '-')), e(where(n))]) for n, t in sorted(TOOLS.items(), key=lambda x: (x[1]['type'], x[1].get('tier', 0)))])
 def item_rows(names):
     rows = []
     for n in sorted(names):
@@ -180,7 +193,7 @@ def item_rows(names):
         for k, lab in (('food', 'hunger'), ('water', 'thirst'), ('heal', 'health')):
             if u.get(k): fx.append('+%d %s' % (u[k], lab))
         if u.get('rad'): fx.append('%+d radiation' % u['rad'])
-        rows.append((slug(n), ['<b>%s</b>' % e(n), e(D['ITEM_DESC'].get(n, '')), ', '.join(fx) or '-', str(D['VALUES'].get(n, '-')), str(D['HULL_PRICE'].get(n, '-')), e(where(n))]))
+        rows.append((slug(n), [named(n), e(D['ITEM_DESC'].get(n, '')), ', '.join(fx) or '-', str(D['VALUES'].get(n, '-')), str(D['HULL_PRICE'].get(n, '-')), e(where(n))]))
     return table(['Item', 'Description', 'Effect', 'Value', 'Hull price', 'Where to get it'], rows)
 ITEMS = [n for n in ALL if PAGE_OF[n] == 'items' and n not in TOOLS]
 BPS = set(D['BP_ITEMS'])
@@ -192,7 +205,7 @@ def g_crops():
     rows = []
     for seed, c in sorted(CROPS.items(), key=lambda x: (x[1]['tier'], x[1]['days'])):
         p = c['produce']; per = 2 if p == 'Pumpkin' else 1
-        rows.append((slug(seed), ['<b>%s</b>' % e(p), str(c['tier']), str(c['lvl']), str(c['days']), ('every %d days' % c['regrow']) if c.get('regrow') else 'No', str(D['VALUES'].get(p, '-')),
+        rows.append((slug(seed), [named(p), str(c['tier']), str(c['lvl']), str(c['days']), ('every %d days' % c['regrow']) if c.get('regrow') else 'No', str(D['VALUES'].get(p, '-')),
                      link(seed) + ' (%s)' % D['VALUES'].get(seed, '-')]))
         PAGE_OF[p] = 'farming'
     return table(['Crop', 'Tier', 'Farming level', 'Days to grow', 'Regrows', 'Value each', 'Seed (value)'], rows)
@@ -206,7 +219,7 @@ def g_cooking():
         if u.get('rad'): fx.append('%+d radiation' % u['rad'])
         bf = ', '.join('<a href="survival.html#buff-%s">%s</a>' % (b, e(D['BUFFS'][b]['name'])) for b, s in D['FOOD_BUFFS'].get(n, []))
         gate = '%s %d' % (r['skill'][0].title(), r['skill'][1]) if r.get('skill') else ''
-        rows.append((slug(n), ['<b>%s</b>' % e(n), e(STATIONS.get(r['station'], r['station'] or 'By hand')), costs(r['cost']), ', '.join(fx) or '-', bf or '-', gate or '-', str(D['VALUES'].get(n, '-'))]))
+        rows.append((slug(n), [named(n), e(STATIONS.get(r['station'], r['station'] or 'By hand')), costs(r['cost']), ', '.join(fx) or '-', bf or '-', gate or '-', str(D['VALUES'].get(n, '-'))]))
     return table(['Dish', 'Cooked at', 'Ingredients', 'Effect', 'Buff', 'Needs', 'Value'], rows)
 def g_animals():
     rows = []
@@ -234,7 +247,7 @@ def g_creatures(boss):
         if k in D['SKULL_FOES']: drops += (', ' if drops else '') + '%s (%s)' % (link('Human Skull'), pct(D['SKULL_FOES'][k]))
         stats = table(['Health', 'Damage', 'Speed', 'XP', 'Level'], [[str(t['hp']), str(t['dmg']), str(t['speed']), str(t['xp']), lvl(k)]])
         out.append('<section class="card" id="%s"><h3>%s</h3><p class="lore">%s</p>%s<p><b>Found in:</b> %s</p><p><b>Drops:</b> %s</p></section>' % (
-            k, e(t['name']), e(D['CREATURE_LORE'].get(k, '')), stats, e(', '.join(mob_places(k)) or 'Raids'), drops or 'Nothing worth taking'))
+            k, pic(k, 'creatures', 'cr') + e(t['name']), e(D['CREATURE_LORE'].get(k, '')), stats, e(', '.join(mob_places(k)) or 'Raids'), drops or 'Nothing worth taking'))
     return ''.join(out)
 def g_zones():
     out = []
@@ -282,7 +295,7 @@ def g_survivors():
         steps = ''.join('<li>%s</li>' % e(st['text']) for st in q.get('steps', []))
         quest = '<p><b>Their favour: %s.</b> &ldquo;%s&rdquo;</p><ol>%s</ol><p><b>Reward:</b> %d XP, %s</p>' % (e(q['title']), e(q['intro']), steps, q['reward']['xp'], ilist(q['reward']['items'])) if q else ''
         out.append('<section class="card" id="%s"><h3>%s</h3><p class="lore">%s</p><p><b>Found at:</b> %s. <b>Skills:</b> Farm %d, Guard %d, Haul %d</p>%s</section>' % (
-            slug(s['name']), e(s['name']), e(D['BIO2'].get(s['name'], s['bio'])), RUIN.get(s['ruin'], s['ruin']), sk['farm'], sk['guard'], sk['haul'], quest))
+            slug(s['name']), e(s['name']), e(D['BIO2'].get(s['name'], s['bio'])), RUIN.get(s['ruin'], s['ruin']) + (' in ' + D['WHERE'][s['name']] if D.get('WHERE', {}).get(s['name']) else ''), sk['farm'], sk['guard'], sk['haul'], quest))
     return ''.join(out)
 def g_starter_quests():
     out = []
@@ -325,7 +338,7 @@ for name in ORDER:
         if key not in GEN: raise SystemExit('%s.html: unknown block %s' % (name, key))
         body = body.replace('<!-- gen:%s -->' % key, GEN[key]())
     body = re.sub(r'<h2>([^<]+)</h2>', lambda m: '<h2 id="%s">%s</h2>' % (slug(m.group(1)), m.group(1)), body)
-    for i, t in re.findall(r'<(?:section|tr|h3)[^>]* id="([^"]+)"[^>]*>\s*(?:<td>)?\s*(?:<h3>)?(?:<b>)?([^<]+)', body):
+    for i, t in re.findall(r'<(?:section|tr|h3)[^>]* id="([^"]+)"[^>]*>\s*(?:<td>)?\s*(?:<h3>)?(?:<b>)?(?:<img[^>]*>)?([^<]+)', body):
         index.append({'t': html.unescape(t.strip()), 'u': '%s.html#%s' % (name, i), 'p': title})
     if name != 'index': index.append({'t': title, 'u': name + '.html', 'p': 'Page'})
     nav = ''.join('<a href="%s.html"%s>%s</a>' % (n, ' aria-current="page"' if n == name else '', e(PAGES[n][0] if n != 'index' else 'Home')) for n in ORDER)
@@ -344,5 +357,5 @@ for name in ORDER:
 seen = set(); idx = [x for x in index if not (x['u'] in seen or seen.add(x['u']))]
 js = open(os.path.join(SRC, 'search.js'), encoding='utf-8').read()
 open(os.path.join(OUT, 'search.js'), 'w', encoding='utf-8').write('const WIKI_INDEX = ' + json.dumps(idx, ensure_ascii=False) + ';\n' + js)
-missing = sorted(n for n in ALL if n not in SRC_OF and PAGE_OF.get(n) in ('weapons', 'armour'))
+missing = sorted(n for n in ALL if n not in SRC_OF and n not in EXTRA_SRC and PAGE_OF.get(n) in ('weapons', 'armour'))
 print('Wiki: %d pages, %d index entries, written to %s' % (len(ORDER), len(idx), OUT) + ('. No source found for: ' + ', '.join(missing) if missing else ''))

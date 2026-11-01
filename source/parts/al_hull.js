@@ -81,7 +81,7 @@ function layoutFor(b) {
     shelfRow(ry + 1, 4, 3); L.decor.push({ kind: 'table', x: (rx + 24) * TS + 8, y: (ry + 6) * TS + 12 }, { kind: 'table', x: (rx + 30) * TS + 8, y: (ry + 6) * TS + 12 }, { kind: 'barrel', x: (rx + rw - 3) * TS + 8, y: (ry + 3) * TS + 12 });
     L.seats.push({ x: rx + 23, y: ry + 6 }, { x: rx + 25, y: ry + 6 }, { x: rx + 29, y: ry + 6 }, { x: rx + 31, y: ry + 6 });
     const n = k === 'hq' ? 6 : k === 'council' ? 4 : 5, rwid = Math.floor((rw - 2) / n);
-    for (let r = 0; r < n; r++) { const x0 = rx + 1 + r * rwid; L.rooms.push({ x: x0, y: ry + 11, w: rwid, h: 8, door: { x: x0 + (rwid >> 1), y: ry + 11 } }); L.beds.push({ x: x0 + 1, y: ry + 13, room: r }); L.carpets.push([x0, ry + 11, rwid, 8]); }
+    for (let r = 0; r < n; r++) { const x0 = rx + 1 + r * rwid; L.rooms.push({ x: x0, y: ry + 9, w: rwid, h: 8, door: { x: x0 + (rwid >> 1), y: ry + 9 } }); L.beds.push({ x: x0 + 1, y: ry + 11, room: r }); L.carpets.push([x0, ry + 9, rwid, 8]); }
   } else if (k === 'house') {
     for (let j = 0; j < 4; j++) L.beds.push({ x: rx + 2 + j * 3, y: ry + 2 });
     L.decor.push({ kind: 'table', x: (rx + 7) * TS + 8, y: (ry + 6) * TS + 12 }, { kind: 'barrel', x: (rx + 12) * TS + 8, y: (ry + 3) * TS + 12 }, { kind: 'sack', x: (rx + 12) * TS + 8, y: (ry + 7) * TS + 12 });

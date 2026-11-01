@@ -2,7 +2,7 @@ import json
 ev = lambda s: pg.evaluate(s)
 def shot(n): pg.screenshot(path='out/%s.png' % n)
 ev('__g.state.placing = null; __g.enemies.length = 0; __g.state.spawnPts.forEach(s => { s.e = null; s.respawnAt = 1e9 })')
-spot = json.loads(ev('''JSON.stringify((()=>{ for (let r=0;r<30;r++) for (let dy=-r;dy<=r;dy++) for (let dx=-r;dx<=r;dx++){ const x=(60+dx)*16+8, y=(60+dy)*16+8; let ok=true; for (let k=-6;k<=6;k++) for (let j=-5;j<=5;j++) if (__g.collides(x+k*16, y+j*16, 10, true)) ok=false; if (ok) return [x,y]; } })())'''))
+spot = json.loads(ev('''JSON.stringify((()=>{ for (let r=0;r<60;r++) for (let dy=-r;dy<=r;dy++) for (let dx=-r;dx<=r;dx++){ const x=(60+dx)*16+8, y=(60+dy)*16+8; let ok=true; for (let k=-6;k<=6;k++) for (let j=-5;j<=5;j++) if (__g.collides(x+k*16, y+j*16, 10, true)) ok=false; if (ok) return [x,y]; } })())'''))
 tx, ty = int(spot[0] // 16), int(spot[1] // 16)
 ev('__g.state.player.x = %d; __g.state.player.y = %d' % tuple(spot))
 print('crops:', ev('JSON.stringify(Object.entries(__g.CROPS).map(([k,c])=>c.produce+" T"+c.tier+" L"+c.lvl))'))
