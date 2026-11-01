@@ -17,6 +17,8 @@ Read this file, then `docs/HANDOFF.md` (current state, open questions, the Chapt
 - `pass4.py` ... `pass18.py`: patch scripts applied by `assemble.py`. Each pass uses `sub1(old, new)` to replace an exact string in the assembled source (it fails loudly if the string is not found) and inserts modules before `marker_end`.
 - `assemble.py` builds `game_new.js`. `build.py` wraps it into `game_new.html` and stamps the version. `release.py` does both and writes `../index.html` and `../version.json`.
 - `wiki.py` builds the player wiki into `../wiki/` (GitHub Pages serves it at `/wiki/`). It loads the built game, reads `__g.wikiData()` (`parts/ap_wiki.js`), and fills the page fragments in `wiki_pages/`, where `<!-- gen:name -->` marks a generated table. `release.py` runs it.
+- `docs/WORLD_DESIGN.md`: the world atlas plan (regions, places, levels 1 to 20, fast travel, lore threads, the survivor chain). Phase 0 done, awaiting decisions.
+- `tools/balance.py`: the balance model. Reads the real numbers from the build and prints TTK against TTD by level and gear tier. `--proposal` models levels 11 to 20. Run it after any change to weapons, armour, enemies or levels.
 - `tests/`: Playwright tests. `python3 tests/run.py regression` runs the regression list. See below.
 
 ## Build
@@ -41,7 +43,7 @@ Or `python3 release.py` to also publish to the repo root. On Windows, `python3` 
 - **Dialogue** (`parts/aa_dialogue.js`, `parts/dialogue.txt`, and scripts generated at runtime with `parseScripts(text)`): `=== node`, `Name: text`, `~ narration`, `@ effects`, `> next`, `* [Tag N] label => target | if cond | do effects`. Conditions: `flag:`, `item:Name>=N`, `rep.track>=N`, `skill.x>=N`, `memory>=N`, `quest:id=status`, joined with `&`, negated with `!`. Effects are added by wrapping `applyEffect`.
 - **Quests**: `QUEST_DEFS` with steps that complete by `check()` or `event`. `questEvent(name)` fires events. Rewards pay on completion.
 - **Story state**: `state.qflags`, `state.rep` (mercy, trust, listeners, hull, raiders), `memoryScore()` counts documents read and echoes seen.
-- **Combat**: enemies get a level from the player's level plus an offset (`LVL_OFF`). Bosses sit higher. Balance was modelled (see `parts/ag_balance.js`). Prepared players should win narrowly; unprepared should lose.
+- **Combat**: enemies get a level from the player's level plus an offset (`LVL_OFF`). Bosses sit higher. Balance is modelled by `tools/balance.py` (the tuned numbers are in `parts/ag_balance.js`). Every enemy gets x1.2 health on Normal (`parts/u_core.js`). Prepared players should win narrowly; unprepared should lose.
 - **Town (the Hull)**: `parts/al_hull.js` (layout, buildings, interiors) and `parts/am_townfolk.js` (roster, schedules, vendors, job board). Buildings and people are data. Everyone has a work place, a home bed and a schedule driven by `state.gameMinutes`.
 - **Crafting progression** (`parts/at_progression.js`, plan in `docs/CRAFTING_PLAN.md`): four tiers; tier N opens when the camp level and its station are both there (`TIER_GATE`: Forge Age = Hamlet + Forge, Settlement = Settlement + Anvil, Industry = Town + Machine Shop + Generator). Weapons only at the Weapon Bench, armour only at the Armour Bench, medicine only at the Medical Station, and those three are used in person (`WALKUP`); everything else works from anywhere in camp. New non-cooking recipes need a `tier`; old `unlock`/`skill` gates are cleared on load, so a blueprint gate must be added after that loop (see `UNIQUES`). Blueprints are for unique items only.
 - **Livestock**: `parts/ak_livestock.js`. **Farming**: `parts/af_farm.js`. **Gear and art**: `parts/ai_arsenal.js`, `parts/aj_restyle.js`.
@@ -58,6 +60,7 @@ Tests are small scripts run by `tests/shot.py` with `LEGACY=1` (creates a charac
 - Teleport the player to a clear spot before testing (a spot inside an obstacle makes movement tests meaningless).
 - Spawn points only spawn enemies when the player is more than about 260px away. Teleport far first.
 - Write a new test for each new feature, and run the regression list before publishing.
+- `tests/t260.py` is the world spike, not a regression test: it prints map generation times, render cost, memory held by stashed maps and save sizes. Run it on its own (`python tests/run.py t260`) after map-engine changes.
 
 ## Release
 1. Bump `VERSION` (for example `0.9.1`) and add a line to `../CHANGELOG.md`.

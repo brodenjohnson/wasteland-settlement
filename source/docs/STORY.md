@@ -8,7 +8,7 @@ Tone: bleak, dark, 18 and over, with gore settings (off, some, full; default ful
 
 ## Characters
 - **Odile Marr** (the Warden, Unit 12): voice on tape, then in person at Lamp Cove on the Tidewrack. "Only answers what is asked."
-- **The ten survivors** (each has a Tag Card): Marta Voss (greenhouse in the Wastes, holds the case), Dex Harlan (Deepcut), Wren Alvarez (The Hollow), Tomas (beekeeper, the Hull), Ripley Cho (last relay in the Spine), Sam Oduya (Depot 9), Lena Fischer (St Anselm's), Boone Keller (MegaMart), Priya Nair (Pylon 3, radio), Juno Park (the Tidewrack, near the Listeners).
+- **The ten survivors** (each has a Tag Card, paid by their favour). As built, all ten live in open ruins in the Wastes: Marta Voss (the Wastes, holds the case), Dex Harlan (the Scrapyard), Wren Alvarez, Old Tomas and Juno Park (Whisper Pines), Ripley Cho (the Ashlands), Sam Oduya (the Quarry), Lena Fischer and Boone Keller (Fallen City), Priya Nair (the Toxic Marsh). The bible placed several of them in dungeons; that was never built. `docs/WORLD_DESIGN.md` section 10 proposes moving four to later regions as a chain.
 - **The Listeners**: heard the broadcast and decided it was a voice. They keep Chapel Row.
 - **The Cantor**: antagonist, to appear in Chapter Three.
 - Quorum: 6 of 11 tags (the player's own does not count).
