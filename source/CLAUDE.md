@@ -2,6 +2,9 @@
 
 A post-nuclear survival, farming and settlement game for the browser. Single HTML file, vanilla JavaScript on a canvas, no dependencies. Hobby project by Broden Johnson (Gold Coast, Australia), built iteratively with Claude. Current version is in `VERSION`.
 
+## Start here
+Read this file, then `docs/HANDOFF.md` (current state, open questions, the Chapter Three starting plan), then `docs/STORY.md` and `docs/STORY_BIBLE.md` (the full story bible, if present). Keep these up to date as you work: update `docs/STORY.md` after each chapter, and add anything a future session would need to this file.
+
 ## How we work
 - Australian English. Plain, a little dry. No emojis. No em dashes. Never "genuinely" or "honestly". Challenge dilution and overextension: if a request spreads the project thin, say so and suggest an order.
 - Build in tested increments. After each feature, run the regression list, then publish. Say plainly what you did not do.
