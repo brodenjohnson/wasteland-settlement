@@ -5,8 +5,8 @@ Written at the end of a long design and build session in a claude.ai chat. The n
 ## First message to paste into the new session
 > Read `source/CLAUDE.md`, then `source/docs/HANDOFF.md`, then `source/docs/STORY.md` and `source/docs/STORY_BIBLE.md`. Run the build and the regression list so we know the baseline is green. Then summarise where the project stands in ten lines, tell me what you would build for Chapter Three and in what order, and ask me anything you need decided before you start.
 
-## State (version 0.10.0)
-Chapter Three is built and playable (see `docs/STORY.md`). Next: Chapter Four (the Roster and the endings), then the faction layer.
+## State (version 0.12.0)
+Chapter Three is built (0.10.0) and crafting follows camp level (0.11.0). The world atlas is under way: read `docs/WORLD_DESIGN.md`. Phase 0 (design, spike, balance model) and Phase 1a (place registry, discovery, Found logs, the memory cap) are done. Next: Phase 1b (levels to 20, Traits, place-set enemy levels), then dungeon templates, then Region 1 enlarged. Chapter Four waits behind the atlas work.
 
 ### Earlier state (0.9.0)
 Working and tested: character creation and multiple saves, survival, crafting with benches, settlement and settlers with jobs, raids, farming with tiers and irrigation, livestock, weapons and armour with their own art, the dialogue engine with reputation and consequences, the Spine and the Tidewrack (Chapter Two), the Kind Stranger mission and the Kingpin, the Hollowclaw and Deepcut, three extra dungeons, the Hull town (37 residents with schedules, 10 vendors, clinic, inn, job board).

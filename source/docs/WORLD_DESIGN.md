@@ -1,6 +1,8 @@
 # World design: the atlas
 
-Status: Phase 0 draft, 2026-11-01. Nothing here is built. Sections marked **Decide** need Broden's answer before Phase 1.
+Status: Phase 0 approved 2026-11-01. Phase 1a built in 0.12.0 (`parts/au_atlas.js`, test t261). Next: Phase 1b.
+
+**Broden's decisions (2026-11-01):** armour piercing and faster damage above level 10, yes. Leave Settlement-tier armour as it is. Region 1 floor of player level minus 2, yes. The picks are called Traits, and existing characters get banked picks. The survivor chain is a guide, not a strict order, and the four moves (Juno to the Tidewrack, Sam to the Dustbowl, Lena and Wren to the Ridge) are approved. Old saves' Region 1 crates refill. The lore voice is approved.
 Measurements come from `tests/t260.py` (the spike) and `tools/balance.py` (the balance model). Re-run both after big changes.
 
 ## 1. What Phase 0 found

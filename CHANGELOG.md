@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.12.0
+- Places go on your map when you find them, with danger pips from one to five. The map counts how many places you have found in the region.
+- Finding a place shows its name on screen and adds it to the Codex, with a picture.
+- The Codex shows pictures of creatures and people too.
+- New in the Codex: Found logs. Every note, tape and terminal you have read, grouped by story, with a count for each. Read them again any time.
+- The game holds far less memory after you have been through a lot of buildings and dungeons.
+- Old saves count the places they have already been to.
+
 ## 0.11.0
 - Crafting grows with your camp. Four tiers: Scavenger from the start, Forge Age at Hamlet with a Forge, Settlement at Settlement with an Anvil, Industry at Town with a Machine Shop and a Generator.
 - Weapons are made only at the Weapon Bench, armour only at the Armour Bench, and medicine at the new Medical Station. You use those three in person: walk up and click.
