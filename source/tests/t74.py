@@ -11,7 +11,7 @@ def click_tile(tx, ty):
 ev('__g.state.spawnPts.forEach(s => { s.e = null; s.respawnAt = 1e9 }); __g.enemies.length = 0')
 ev('__g.state.title = false'); ev('__g.state.qflags.storyInit = true; __g.state.qflags.sitesPlaced = true; __g.state.qflags["read:Folded Note"] = true; __g.state.intro = null')
 pg.wait_for_timeout(300)
-ev('__g.skillXp("crafting", 20000)'); print('crafting level:', ev('__g.skillLevel("crafting")'))
+ev("__g.state.settleLvl = 4"); ev('__g.skillXp("crafting", 20000)'); print('crafting level:', ev('__g.skillLevel("crafting")'))
 for n, q in [('Wood', 80), ('Scrap', 80), ('Stone', 40), ('Metal plate', 40), ('Empty Bottle', 3)]: ev('__g.addItem("%s", %d)' % (n, q))
 for rid in ['pipe', 'pipe', 'pipe', 'pipe', 'sink', 'wall', 'wall', 'wall']: ev('__g.craftKit(__g.RECIPES.find(r=>r.id==="%s"))' % rid)
 print('kits:', ev('JSON.stringify(__g.state.player.inventory.filter(s=>s&&/^Kit/.test(s.name)).map(s=>s.name+" x"+s.qty))'))

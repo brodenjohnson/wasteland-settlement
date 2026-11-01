@@ -98,6 +98,7 @@ for a in D['ANIMALS'].values():
 for k, dg in D['DUNGEONS'].items():
     if dg.get('reward'): add_src(dg['reward'], 'Found at the end of ' + dg['name'])
 EXTRA_SRC = {'Shiv': 'Picked up during a side mission'}
+for _u in D.get('UNIQUES', []): EXTRA_SRC['Blueprint: ' + _u['name']] = 'Found at ' + _u['where']
 def where(n): return '; '.join(SRC_OF.get(n, [])) or EXTRA_SRC.get(n, 'Found in the world')
 
 # ---------------- generated blocks ----------------
@@ -152,16 +153,18 @@ def g_recipes():
         rows = []
         for r in rs:
             gate = []
+            g = D.get('TIER_GATE', {}).get(str(r.get('tier', 1)))
+            if g and r['cat'] != 'Cooking': gate.append('%s camp and %s' % (D['SL_NAMES'][g['lvl'] - 1], ' and '.join(STATIONS.get(s, s) for s in g['st'])))
             if r.get('unlock'): gate.append('Needs ' + link('Blueprint: ' + D['BLUEPRINTS'].get(r['unlock'], r['unlock'])))
             if r['id'] in D['SL_REQ']: gate.append('Camp level %d' % D['SL_REQ'][r['id']])
             if r.get('skill'): gate.append('%s %d' % (r['skill'][0].title(), r['skill'][1]))
             hp = D['STRUCT_HP'].get(r.get('place')) if r.get('place') else None
-            rows.append((slug(r['name']) if not r.get('gives') else '', [link(r['name']) if r.get('gives') else e(r['name']), e(STATIONS.get(r['station'], r['station']) if r.get('station') else 'By hand'),
+            rows.append((slug(r['name']) if not r.get('gives') else '', [link(r['name']) if r.get('gives') else e(r['name']), e(STATIONS.get(r['station'], r['station']) if r.get('station') else 'By hand') + (' <span class="dim">(in person)</span>' if r.get('station') in D.get('WALKUP', []) else ''),
                          costs(r['cost']), ', '.join(gate) or '-', e(D['RECIPE_DESC'].get(r['id'], '')) + (' <span class="dim">%d hp</span>' % hp if hp else '')]))
         out.append('<h3 id="tab-%s">%s</h3>' % (slug(tab), e(tab)) + table(['Recipe', 'Made at', 'Cost', 'Needs', 'Notes'], rows))
     return ''.join(out)
 def g_blueprints():
-    return table(['Blueprint', 'Unlocks'], [(slug('Blueprint: ' + n), [link('Blueprint: ' + n), ', '.join(e(r['name']) for r in D['RECIPES'] if r.get('unlock') == k)]) for k, n in D['BLUEPRINTS'].items()])
+    return table(['Blueprint', 'Where to find it', 'Makes', 'Made at'], [(slug('Blueprint: ' + u['name']), [link('Blueprint: ' + u['name']), e(u['where']), ', '.join(link(r['name']) for r in D['RECIPES'] if r.get('unlock') == u['key']), e(STATIONS.get(u['st'], u['st']))]) for u in D.get('UNIQUES', [])])
 def tier(n): t = D['ITEM_TIER'].get(n); return e(D['TIER_NAME'][t]) if t is not None else '-'
 def g_weapons(kind):
     rows = []
@@ -171,7 +174,7 @@ def g_weapons(kind):
         rows.append((slug(n), [named(n), str(w['dmg']), '%ss' % num(w['cd'], 2), '<b>%s</b>' % num(round(w['dmg'] / w['cd'], 1)), extra, tier(n), str(D['VALUES'].get(n, '-')), e(where(n))]))
     return table(['Weapon', 'Damage', 'Swing' if kind == 'melee' else 'Fire rate', 'Damage a second', 'Reach' if kind == 'melee' else 'Range, ammo', 'Grade', 'Value', 'Where to get it'], rows)
 def g_ammo(): return table(['Ammo', 'Used by', 'Value', 'Where to get it'], [(slug(a), [e(a), ', '.join(link(n) for n, w in W.items() if w.get('ammo') == a), str(D['VALUES'].get(a, '-')), e(where(a))]) for a in sorted(AMMO)])
-SET_NAMES = {'raider': 'Raider', 'patch': 'Patchwork', 'scav': 'Scavenger Rig', 'metal': 'Metal', 'riot': 'Riot', 'bone': 'Bone Raider', 'haz': 'Hazmat', 'cap': 'Road Captain', 'combat': 'Combat'}
+SET_NAMES = {'guild': 'Guild Plate', 'raider': 'Raider', 'patch': 'Patchwork', 'scav': 'Scavenger Rig', 'metal': 'Metal', 'riot': 'Riot', 'bone': 'Bone Raider', 'haz': 'Hazmat', 'cap': 'Road Captain', 'combat': 'Combat'}
 def g_armour():
     out, used = [], set()
     sets = sorted(D['SETS'].items(), key=lambda kv: sum(A[p]['dmg'] for p in kv[1] if p in A))
@@ -204,7 +207,7 @@ BPS = set(D['BP_ITEMS'])
 def g_items_materials(): return item_rows([n for n in ITEMS if not (n.startswith('Kit: ') and n not in SRC_OF) and n not in BPS and n not in AMMO and not D['ITEM_USE'].get(n) and n != 'Caps'])
 def g_items_food(): return item_rows([n for n in ITEMS if D['ITEM_USE'].get(n, {}).get('food') or D['ITEM_USE'].get(n, {}).get('water')])
 def g_items_medicine(): return item_rows([n for n in ITEMS if n in D['ITEM_USE'] and not (D['ITEM_USE'][n].get('food') or D['ITEM_USE'][n].get('water'))])
-def g_items_blueprints(): return item_rows([n for n in ITEMS if n in BPS])
+def g_items_blueprints(): return item_rows([n for n in ITEMS if n in BPS and n.replace('Blueprint: ', '') in {u['name'] for u in D.get('UNIQUES', [])}])
 def g_crops():
     rows = []
     for seed, c in sorted(CROPS.items(), key=lambda x: (x[1]['tier'], x[1]['days'])):
@@ -336,6 +339,14 @@ def g_all_quests():
     if rest: out += '<details class="spoiler"><summary>Spoiler: other story quests (click to show)</summary>%s</details>' % ''.join(quest_card(q, True) for q in rest)
     return out
 
+def g_tiers():
+    G = D.get('TIER_GATE', {})
+    rows = [['1', e(D['TIER_NAMES'][0]), 'From the start', '-']]
+    for t in ('2', '3', '4'):
+        g = G.get(t)
+        if g: rows.append([t, e(D['TIER_NAMES'][int(t) - 1]), '%s camp (%s points)' % (D['SL_NAMES'][g['lvl'] - 1], D['SL_STEPS'][g['lvl'] - 1]), ' and '.join(e(STATIONS.get(x, x)) for x in g['st'])])
+    return table(['Tier', 'Name', 'Camp level', 'Station to build'], rows)
+
 def g_changelog():
     txt = open(os.path.join(ROOT, 'CHANGELOG.md'), encoding='utf-8').read()
     out = []
@@ -349,7 +360,7 @@ GEN = {'difficulty': g_difficulty, 'survival': g_survival, 'healing': g_healing,
        'ammo': g_ammo, 'armour': g_armour, 'tools': g_tools, 'items_materials': g_items_materials, 'items_food': g_items_food, 'items_medicine': g_items_medicine,
        'items_blueprints': g_items_blueprints, 'crops': g_crops, 'produce': g_produce, 'cooking': g_cooking, 'animals': g_animals, 'creatures': lambda: g_creatures(False),
        'bosses': lambda: g_creatures(True), 'zones': g_zones, 'hull_buildings': g_hull_buildings, 'hull_people': g_hull_people, 'hull_vendors': g_hull_vendors,
-       'hull_jobs': g_hull_jobs, 'all_quests': g_all_quests, 'survivors': g_survivors, 'starter_quests': g_starter_quests, 'changelog': g_changelog}
+       'hull_jobs': g_hull_jobs, 'all_quests': g_all_quests, 'tiers': g_tiers, 'survivors': g_survivors, 'starter_quests': g_starter_quests, 'changelog': g_changelog}
 
 ORDER = ['index', 'getting-started', 'survival', 'settlement', 'skills', 'crafting', 'weapons', 'armour', 'items', 'farming', 'creatures', 'places', 'the-hull', 'people', 'quests', 'whats-new']
 CSS = open(os.path.join(SRC, 'wiki.css'), encoding='utf-8').read()

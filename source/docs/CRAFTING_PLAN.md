@@ -1,6 +1,6 @@
 # Crafting and settlement progression: plan
 
-Status: **draft for Broden to check** (2026-11-01). Nothing here is built yet. Once agreed, this file becomes the reference and `docs/STORY.md` style notes move into CLAUDE.md.
+Status: **approved and built in 0.11.0** (2026-11-01). Code: `parts/at_progression.js`. Test: `tests/t254.py`. The recipe table below was the proposal; the code is the source of truth (the wiki's Crafting page is generated from it).
 
 ## Decided
 

@@ -43,6 +43,7 @@ Or `python3 release.py` to also publish to the repo root. On Windows, `python3` 
 - **Story state**: `state.qflags`, `state.rep` (mercy, trust, listeners, hull, raiders), `memoryScore()` counts documents read and echoes seen.
 - **Combat**: enemies get a level from the player's level plus an offset (`LVL_OFF`). Bosses sit higher. Balance was modelled (see `parts/ag_balance.js`). Prepared players should win narrowly; unprepared should lose.
 - **Town (the Hull)**: `parts/al_hull.js` (layout, buildings, interiors) and `parts/am_townfolk.js` (roster, schedules, vendors, job board). Buildings and people are data. Everyone has a work place, a home bed and a schedule driven by `state.gameMinutes`.
+- **Crafting progression** (`parts/at_progression.js`, plan in `docs/CRAFTING_PLAN.md`): four tiers; tier N opens when the camp level and its station are both there (`TIER_GATE`: Forge Age = Hamlet + Forge, Settlement = Settlement + Anvil, Industry = Town + Machine Shop + Generator). Weapons only at the Weapon Bench, armour only at the Armour Bench, medicine only at the Medical Station, and those three are used in person (`WALKUP`); everything else works from anywhere in camp. New non-cooking recipes need a `tier`; old `unlock`/`skill` gates are cleared on load, so a blueprint gate must be added after that loop (see `UNIQUES`). Blueprints are for unique items only.
 - **Livestock**: `parts/ak_livestock.js`. **Farming**: `parts/af_farm.js`. **Gear and art**: `parts/ai_arsenal.js`, `parts/aj_restyle.js`.
 
 ## Testing

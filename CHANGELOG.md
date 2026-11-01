@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.11.0
+- Crafting grows with your camp. Four tiers: Scavenger from the start, Forge Age at Hamlet with a Forge, Settlement at Settlement with an Anvil, Industry at Town with a Machine Shop and a Generator.
+- Weapons are made only at the Weapon Bench, armour only at the Armour Bench, and medicine at the new Medical Station. You use those three in person: walk up and click.
+- New: the Medical Station, the Generator (turrets fire faster), the Machine Shop, Machined Parts, Trauma Kits and craftable Rad-Away.
+- Six unique blueprints to find: Whisper, Breaker, Debt Collector, Leadweave Cloak, Harpooners Coat and Guild Plate. The old manuals are read for Crafting experience.
+- Crafting skill no longer locks recipes. It gives a chance to get materials back.
+- Sleep at any hour when it is safe, and get up whenever you like (Space, or Stop sleeping). The Clinic Bed heals you while you sleep.
+- Raids grow a little with your camp.
+- The Progress screen shows what each camp level unlocks and tells you the next step.
+- Old saves keep everything they have built and crafted.
+
 ## 0.10.1
 - More of what you build counts toward your camp's level: tyre walls, skull pikes, barrel fires, your workshops, the drying rack, feed troughs, animals, crops and sprinklers.
 - The wiki explains exactly how camp levels and points work.
