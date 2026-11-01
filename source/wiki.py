@@ -133,7 +133,8 @@ def g_buffs():
 def g_camp_levels():
     need = {}
     for sid, lvl in D['SL_REQ'].items(): need.setdefault(lvl, []).append(STATIONS.get(sid) or next((r['name'] for r in D['RECIPES'] if r['id'] == sid), sid))
-    return table(['Level', 'Name', 'Safe zone radius', 'Unlocks'], [[str(i + 1), e(n), '%d tiles' % D['CAMP_RADII'][i], e(', '.join(sorted(need.get(i + 1, []))) or '-')] for i, n in enumerate(D['SL_NAMES'])])
+    st = D.get('SL_STEPS', [])
+    return table(['Level', 'Name', 'Points needed', 'Safe zone radius', 'Unlocks'], [[str(i + 1), e(n), str(st[i]) if i < len(st) else '-', '%d tiles' % D['CAMP_RADII'][i], e(', '.join(sorted(need.get(i + 1, []))) or '-')] for i, n in enumerate(D['SL_NAMES'])])
 def g_raids():
     return table(['Raid', 'From day', 'Size', 'Advice'], [[e(r['name']), str(max(r['minDay'], D['CONFIG']['raids']['firstDay'])), pct(r['mult']), e(r['hint'])] for r in D['RAID_KINDS'].values()])
 def g_jobs(): return '<ul>' + ''.join('<li>%s</li>' % e(j) for j in D['JOBS']) + '</ul>'

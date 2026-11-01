@@ -8,7 +8,7 @@ Read this file, then `docs/HANDOFF.md` (current state, open questions, the Chapt
 ## How we work
 - Australian English. Plain, a little dry. No emojis. No em dashes. Never "genuinely" or "honestly". Challenge dilution and overextension: if a request spreads the project thin, say so and suggest an order.
 - Build in tested increments. After each feature, run the regression list, then publish. Say plainly what you did not do.
-- The player wiki is part of every feature. Numbers regenerate from the game, but prose does not: when you add a mechanic, place, person, vendor or item type, update the matching page in `wiki_pages/` (and add a generated block if it is data). The wiki is spoiler-free by Broden's decision: no story items, documents, main-story quests or twist characters. `STORY_ITEMS` and `STORY_QUESTS` in `wiki.py` filter these; extend them when the story grows.
+- The player wiki is part of every feature. Numbers regenerate from the game, but prose does not: when you add a mechanic, place, person, vendor or item type, update the matching page in `wiki_pages/` (and add a generated block if it is data). The wiki is spoiler-free by Broden's decision: no story items, documents, main-story quests or twist characters. `STORY_ITEMS` and `STORY_QUESTS` in `wiki.py` filter these; extend them when the story grows. The camp points list in `wiki_pages/settlement.html` is copied by hand from `settlementPoints()`: change both together.
 - Broden decides direction. Claude may reorder the roadmap and overrule suggestions where it has a good reason, and says why.
 
 ## Layout (this folder is `source/` inside the repo)

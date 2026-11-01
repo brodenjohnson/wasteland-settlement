@@ -9563,7 +9563,7 @@ function wikiData() {
   const plain = v => JSON.parse(JSON.stringify(v, (k, x) => x instanceof Set ? [...x] : x instanceof Map ? Object.fromEntries(x) : typeof x === 'function' ? undefined : x));
   const T = { CONFIG, RES, ITEM_USE, TOOL_ITEMS, STATION_NAMES, BLUEPRINTS, BP_ITEMS, WEAPONS, ARMOUR, SLOT_NAMES, CROPS, ITEM_DESC, ENEMY_TYPES, DROPS, STRUCT_HP, CRAFT_TABS, RECIPES,
     ZONE_NAMES, SPAWN_DEFS, TIER_NAME, ITEM_TIER, JOBS, SURVIVOR_DEFS, SKILL_ORDER, VALUE, TIER_NAMES, RECIPE_DESC, QUEST_DEFS, DIFFS, CREATURE_LORE, PLACE_LORE, STORY_ITEMS,
-    BUFFS, FOOD_BUFFS, SL_NAMES, SL_REQ, RAID_KINDS, BIO2, SURV_QUESTS, CAMP_RADII, LVL_OFF, DUNGEONS, FARM_PRODUCE, COOKED, ANIMALS, ROSTER, SETS, MISSIONS, HB, SKULL_FOES,
+    BUFFS, FOOD_BUFFS, SL_NAMES, SL_REQ, SL_STEPS, RAID_KINDS, BIO2, SURV_QUESTS, CAMP_RADII, LVL_OFF, DUNGEONS, FARM_PRODUCE, COOKED, ANIMALS, ROSTER, SETS, MISSIONS, HB, SKULL_FOES,
     SKILLS: Object.fromEntries(Object.entries(SKILLS).map(([k, s]) => [k, { name: s.name, blurb: s.blurb, perks: [1, 2, 4, 6, 8, 10].map(l => [l, s.perk ? s.perk(l) : '']) }])),
     MAPDEFS: Object.fromEntries(Object.entries(MAPDEFS).map(([k, m]) => [k, { id: m.id, name: m.name, theme: m.theme, zone: m.zone, rad: m.rad, mobs: m.mobs, boss: m.boss }])) };
   const out = {}; for (const k in T) out[k] = plain(T[k]);
