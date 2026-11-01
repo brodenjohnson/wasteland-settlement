@@ -53,6 +53,10 @@ footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line);
 }
 img.ic { width: 24px; height: 24px; image-rendering: pixelated; vertical-align: middle; margin: -4px .45rem -2px 0; }
 img.cr { height: 54px; width: auto; image-rendering: pixelated; vertical-align: middle; margin-right: .7rem; }
+details.spoiler { background: var(--panel); border: 1px dashed var(--accent); border-radius: 5px; margin: 1rem 0; padding: .2rem .9rem; }
+details.spoiler summary { cursor: pointer; color: var(--accent); font-weight: 600; padding: .5rem 0; }
+details.spoiler[open] summary { margin-bottom: .3rem; }
+.tip { background: var(--panel2); border-left: 3px solid var(--good); padding: .5rem .8rem; border-radius: 0 4px 4px 0; }
 </style></head>
 <body><header><a class="brand" href="index.html">Wasteland Settlement <span>Wiki</span></a><a class="play" href="../index.html">Play the game</a>
 <button class="menu" aria-expanded="false" aria-controls="nav" onclick="document.body.classList.toggle('navopen');this.setAttribute('aria-expanded',document.body.classList.contains('navopen'))">Pages</button></header>
@@ -74,11 +78,11 @@ img.cr { height: 54px; width: auto; image-rendering: pixelated; vertical-align: 
 <a href="places.html"><b>Places</b><span>The regions of the Wastes and the places under them.</span></a>
 <a href="the-hull.html"><b>The Hull</b><span>The town: buildings, residents, vendors and the job board.</span></a>
 <a href="people.html"><b>People</b><span>The ten survivors with tags on their wrists, and what they want.</span></a>
-<a href="quests.html"><b>Quests</b><span>Early goals, survivors' favours and Hull jobs.</span></a>
+<a href="quests.html"><b>Quests</b><span>Every quest, with how to get unstuck. Story quests are behind spoilers.</span></a>
 <a href="whats-new.html"><b>What is new</b><span>Every update, newest first.</span></a>
 </div>
 
-<div class="note">This wiki stays clear of the main story. It tells you how things work and where things are, not what happened. Your journal tracks the story as you go.</div>
+<div class="note">This wiki stays clear of the main story. It tells you how things work and where things are, not what happened. If you are stuck on a story quest, the <a href="quests.html#story">Quests</a> page has help hidden behind spoiler blocks.</div>
 
-<footer>Written for version 0.10.0. Numbers on these pages come straight from the game, so they match the build. No story spoilers.</footer></main></div>
+<footer>Written for version 0.10.1. Numbers on these pages come straight from the game, so they match the build. Story help is only on the Quests page, behind spoiler blocks.</footer></main></div>
 <script src="search.js"></script></body></html>

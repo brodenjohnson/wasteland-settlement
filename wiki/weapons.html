@@ -53,6 +53,10 @@ footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line);
 }
 img.ic { width: 24px; height: 24px; image-rendering: pixelated; vertical-align: middle; margin: -4px .45rem -2px 0; }
 img.cr { height: 54px; width: auto; image-rendering: pixelated; vertical-align: middle; margin-right: .7rem; }
+details.spoiler { background: var(--panel); border: 1px dashed var(--accent); border-radius: 5px; margin: 1rem 0; padding: .2rem .9rem; }
+details.spoiler summary { cursor: pointer; color: var(--accent); font-weight: 600; padding: .5rem 0; }
+details.spoiler[open] summary { margin-bottom: .3rem; }
+.tip { background: var(--panel2); border-left: 3px solid var(--good); padding: .5rem .8rem; border-radius: 0 4px 4px 0; }
 </style></head>
 <body><header><a class="brand" href="index.html">Wasteland Settlement <span>Wiki</span></a><a class="play" href="../index.html">Play the game</a>
 <button class="menu" aria-expanded="false" aria-controls="nav" onclick="document.body.classList.toggle('navopen');this.setAttribute('aria-expanded',document.body.classList.contains('navopen'))">Pages</button></header>
@@ -66,5 +70,5 @@ img.cr { height: 54px; width: auto; image-rendering: pixelated; vertical-align: 
 <h2 id="ammunition">Ammunition</h2>
 <div class="tw"><table class=""><thead><tr><th>Ammo</th><th>Used by</th><th>Value</th><th>Where to get it</th></tr></thead><tbody><tr id="bolts"><td>Bolts</td><td><a href="weapons.html#crossbow">Crossbow</a>, <a href="weapons.html#warden-s-crossbow">Warden&#x27;s Crossbow</a>, <a href="weapons.html#harpoon-gun">Harpoon Gun</a></td><td>2</td><td>Crafted at Workbench; Sold at The Armoury; Sold at Harbour Guard HQ</td></tr><tr id="pistol-rounds"><td>Pistol rounds</td><td><a href="weapons.html#pipe-pistol">Pipe Pistol</a>, <a href="weapons.html#hunting-rifle">Hunting Rifle</a>, <a href="weapons.html#revolver">Revolver</a>, <a href="weapons.html#rattler-smg">Rattler SMG</a>, <a href="weapons.html#zip-gun">Zip Gun</a>, <a href="weapons.html#road-rifle">Road Rifle</a></td><td>6</td><td>Crafted at Forge; Sold at Mags&#x27; General Store; Sold at The Armoury; Sold at Harbour Guard HQ; Dropped by Scrapper; Dropped by Gunner; Dropped by Sniper; Dropped by Listener zealot; Reward: Hold the Gate</td></tr><tr id="shells"><td>Shells</td><td><a href="weapons.html#sawn-off-shotgun">Sawn-off Shotgun</a>, <a href="weapons.html#pump-shotgun">Pump Shotgun</a>, <a href="weapons.html#scatter-pipe">Scatter Pipe</a></td><td>2</td><td>Crafted at Forge; Sold at The Armoury; Sold at Harbour Guard HQ; Dropped by Gunner</td></tr></tbody></table></div>
 
-<footer>Written for version 0.10.0. Numbers on these pages come straight from the game, so they match the build. No story spoilers.</footer></main></div>
+<footer>Written for version 0.10.1. Numbers on these pages come straight from the game, so they match the build. Story help is only on the Quests page, behind spoiler blocks.</footer></main></div>
 <script src="search.js"></script></body></html>

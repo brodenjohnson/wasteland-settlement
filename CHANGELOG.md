@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.1
+- More of what you build counts toward your camp's level: tyre walls, skull pikes, barrel fires, your workshops, the drying rack, feed troughs, animals, crops and sprinklers.
+- The wiki explains exactly how camp levels and points work.
+- The wiki's Quests page now lists every quest, with a How to note for each. Story quests are hidden behind spoiler blocks.
+
 ## 0.10.0
 - Chapter Three: The Long Table. Go home and ask Marta what is in the case. Four new quests, a new boss, the Cantor's voice on the radio at night, and a decision at a long table that Chapter Four will remember.
 - The settlement panel shows how many people your valley could take in, and what is holding the number down.

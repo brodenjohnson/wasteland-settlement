@@ -84,3 +84,19 @@ function wikiWhere() {
   return out;
 }
 Object.assign(DBG, { wikiArt, wikiWhere, markHull, inTown, spotNear, decorKinds: () => decor.map(d => d.kind) });
+
+/* ---------- Newer builds count toward the camp's level ---------- */
+let slExtra = { t: -9, pts: 0 };
+function settlementExtras() {
+  if (state.elapsed - slExtra.t < 1.5) return slExtra.pts;
+  const sc = t => structCount([t]);
+  let walls = 0; for (const [, st] of structs) if (WALLTYPES.has(st.type)) walls++;
+  const pts = Math.floor((walls + sc('tyrewall')) / 6) - Math.floor(walls / 6)
+    + Math.min(5, sc('skullpike') * 0.5) + sc('barrelfire') * 0.5
+    + (sc('workbench') ? 1 : 0) + (sc('forge') ? 2 : 0) + (sc('anvil') ? 2 : 0) + (sc('weaponbench') ? 2 : 0) + (sc('armourbench') ? 2 : 0) + (sc('rack') ? 1 : 0)
+    + (sc('trough') ? 2 : 0) + Math.min(6, animals.length * 0.5) + Math.min(8, crops.size / 10) + Math.min(4, sc('sprinkler'));
+  slExtra = { t: state.elapsed, pts };
+  return pts;
+}
+{ const o = settlementPoints; settlementPoints = function () { return state.map === 'wastes' ? o() + settlementExtras() : o(); }; }
+Object.assign(DBG, { settlementExtras, settlementPoints, settlementLevel });

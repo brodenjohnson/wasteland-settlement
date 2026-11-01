@@ -53,6 +53,10 @@ footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line);
 }
 img.ic { width: 24px; height: 24px; image-rendering: pixelated; vertical-align: middle; margin: -4px .45rem -2px 0; }
 img.cr { height: 54px; width: auto; image-rendering: pixelated; vertical-align: middle; margin-right: .7rem; }
+details.spoiler { background: var(--panel); border: 1px dashed var(--accent); border-radius: 5px; margin: 1rem 0; padding: .2rem .9rem; }
+details.spoiler summary { cursor: pointer; color: var(--accent); font-weight: 600; padding: .5rem 0; }
+details.spoiler[open] summary { margin-bottom: .3rem; }
+.tip { background: var(--panel2); border-left: 3px solid var(--good); padding: .5rem .8rem; border-radius: 0 4px 4px 0; }
 </style></head>
 <body><header><a class="brand" href="index.html">Wasteland Settlement <span>Wiki</span></a><a class="play" href="../index.html">Play the game</a>
 <button class="menu" aria-expanded="false" aria-controls="nav" onclick="document.body.classList.toggle('navopen');this.setAttribute('aria-expanded',document.body.classList.contains('navopen'))">Pages</button></header>
@@ -83,5 +87,5 @@ img.cr { height: 54px; width: auto; image-rendering: pixelated; vertical-align: 
 </ul>
 <div class="tw"><table class=""><thead><tr><th>Animal</th><th>Bought as</th><th>Most you can keep</th><th>Grows up in</th><th>Gives daily</th><th>Slaughter</th></tr></thead><tbody><tr><td>Twohead cow</td><td><a href="farming.html#twohead-calf">Twohead Calf</a></td><td>6</td><td>3 days</td><td><a href="farming.html#milk">Milk</a></td><td>4 to 6 <a href="items.html#raw-meat">Raw Meat</a>, 2 <a href="items.html#hide">Hide</a></td></tr><tr><td>Roach hen</td><td><a href="farming.html#roach-hatchling">Roach Hatchling</a></td><td>12</td><td>2 days</td><td><a href="farming.html#roach-egg">Roach Egg</a></td><td>1 to 2 <a href="items.html#raw-meat">Raw Meat</a></td></tr></tbody></table></div>
 
-<footer>Written for version 0.10.0. Numbers on these pages come straight from the game, so they match the build. No story spoilers.</footer></main></div>
+<footer>Written for version 0.10.1. Numbers on these pages come straight from the game, so they match the build. Story help is only on the Quests page, behind spoiler blocks.</footer></main></div>
 <script src="search.js"></script></body></html>

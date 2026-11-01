@@ -309,6 +309,33 @@ def g_starter_quests():
         steps = ''.join('<li>%s</li>' % e(s['text']) for s in q['steps'])
         out.append('<section class="card" id="q-%s"><h3>%s</h3><p class="lore">%s</p><ol>%s</ol><p><b>Reward:</b> %d XP, %s</p></section>' % (q['id'], e(q['title']), e(q['desc']), steps, q['reward']['xp'], ilist(q['reward']['items'])))
     return ''.join(out)
+TIPS = json.load(open(os.path.join(SRC, 'quest_tips.json'), encoding='utf-8'))
+QTITLE = {q['id']: q['title'] for q in D['QUEST_DEFS']}
+STORY_GROUPS = [('Side mission', ['stranger']), ('Chapter One', ['note', 'pump', 'signal']), ('Chapter Two', ['stairs', 'lamplighter', 'quorum']), ('Chapter Three', ['ch3_case', 'ch3_radio', 'ch3_listeners', 'ch3_table'])]
+def quest_card(q, spoiler):
+    steps = ''.join('<li>%s</li>' % e(st['text']) for st in q['steps'])
+    nxt = ', '.join(e(QTITLE.get(n, n)) for n in q.get('next') or [])
+    tip = TIPS.get(q['id'])
+    return '<section class="card"%s><h3>%s <span class="dim">from %s</span></h3><p class="lore">%s</p><ol>%s</ol>%s<p><b>Reward:</b> %d XP%s%s</p></section>' % (
+        '' if spoiler else ' id="q-%s"' % q['id'], e(q['title']), e(q.get('giver', '')), e(q['desc']), steps,
+        '<p class="tip"><b>How to:</b> %s</p>' % e(tip) if tip else '', q['reward']['xp'], (', ' + ilist(q['reward']['items'])) if [i for i in q['reward']['items'] if i['name'] not in STORY] else '',
+        ('. <b>Leads to:</b> ' + nxt) if nxt else '')
+def g_all_quests():
+    by = {q['id']: q for q in D['QUEST_DEFS']}
+    grouped = {i for _, ids in STORY_GROUPS for i in ids}
+    early = [q for q in D['QUEST_DEFS'] if not q['id'].startswith(('sq_', 'bm_')) and q['id'] not in grouped and q['id'] not in STORY_QUESTS]
+    out = '<h2 id="early-goals">Early goals</h2><p>These teach the basics and set you up for the long haul.</p>' + ''.join(quest_card(q, False) for q in early)
+    out += "<h2 id=\"survivors-favours\">Survivors' favours</h2><p>Each of the ten survivors asks one favour. Finishing it gives you their Tag Card and makes them better at their work. More about each of them is on the <a href=\"people.html\">People</a> page.</p>"
+    out += ''.join(quest_card(q, False) for q in D['QUEST_DEFS'] if q['id'].startswith('sq_'))
+    out += '<h2 id="hull-jobs">Hull jobs</h2><p>From the job board in the Hull plaza. Each one also raises your Hull reputation.</p>' + ''.join(quest_card(q, False) for q in D['QUEST_DEFS'] if q['id'].startswith('bm_'))
+    out += '<h2 id="story">The story</h2><p>The main story and its side missions are hidden below so nobody reads them by accident. Open a section only if you are stuck.</p>'
+    for name, ids in STORY_GROUPS:
+        qs = [by[i] for i in ids if i in by]
+        if qs: out += '<details class="spoiler"><summary>Spoiler: %s (click to show)</summary>%s</details>' % (e(name), ''.join(quest_card(q, True) for q in qs))
+    rest = [q for q in D['QUEST_DEFS'] if q['id'] in STORY_QUESTS and q['id'] not in grouped]
+    if rest: out += '<details class="spoiler"><summary>Spoiler: other story quests (click to show)</summary>%s</details>' % ''.join(quest_card(q, True) for q in rest)
+    return out
+
 def g_changelog():
     txt = open(os.path.join(ROOT, 'CHANGELOG.md'), encoding='utf-8').read()
     out = []
@@ -322,7 +349,7 @@ GEN = {'difficulty': g_difficulty, 'survival': g_survival, 'healing': g_healing,
        'ammo': g_ammo, 'armour': g_armour, 'tools': g_tools, 'items_materials': g_items_materials, 'items_food': g_items_food, 'items_medicine': g_items_medicine,
        'items_blueprints': g_items_blueprints, 'crops': g_crops, 'produce': g_produce, 'cooking': g_cooking, 'animals': g_animals, 'creatures': lambda: g_creatures(False),
        'bosses': lambda: g_creatures(True), 'zones': g_zones, 'hull_buildings': g_hull_buildings, 'hull_people': g_hull_people, 'hull_vendors': g_hull_vendors,
-       'hull_jobs': g_hull_jobs, 'survivors': g_survivors, 'starter_quests': g_starter_quests, 'changelog': g_changelog}
+       'hull_jobs': g_hull_jobs, 'all_quests': g_all_quests, 'survivors': g_survivors, 'starter_quests': g_starter_quests, 'changelog': g_changelog}
 
 ORDER = ['index', 'getting-started', 'survival', 'settlement', 'skills', 'crafting', 'weapons', 'armour', 'items', 'farming', 'creatures', 'places', 'the-hull', 'people', 'quests', 'whats-new']
 CSS = open(os.path.join(SRC, 'wiki.css'), encoding='utf-8').read()
@@ -356,7 +383,7 @@ for name in ORDER:
 <body><header><a class="brand" href="index.html">Wasteland Settlement <span>Wiki</span></a><a class="play" href="../index.html">Play the game</a>
 <button class="menu" aria-expanded="false" aria-controls="nav" onclick="document.body.classList.toggle('navopen');this.setAttribute('aria-expanded',document.body.classList.contains('navopen'))">Pages</button></header>
 <div class="wrap"><nav id="nav">%s</nav><main><h1>%s</h1><p class="blurb">%s</p>%s
-<footer>Written for version %s. Numbers on these pages come straight from the game, so they match the build. No story spoilers.</footer></main></div>
+<footer>Written for version %s. Numbers on these pages come straight from the game, so they match the build. Story help is only on the Quests page, behind spoiler blocks.</footer></main></div>
 <script src="search.js"></script></body></html>''' % (e(title if name != 'index' else 'Wasteland Settlement Wiki'), e(blurb), CSS, nav, e(title), e(blurb), body, e(VERSION))
     open(os.path.join(OUT, name + '.html'), 'w', encoding='utf-8').write(page)
 seen = set(); idx = [x for x in index if not (x['u'] in seen or seen.add(x['u']))]
