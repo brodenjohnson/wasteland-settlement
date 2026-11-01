@@ -85,8 +85,10 @@ for k, stock in D['VENDOR_STOCK'].items():
     for n, rep in stock.items(): add_src(n, 'Sold at ' + VNAME.get(k, k) + (' (Hull reputation %d)' % rep if rep > 0 else ''))
 ENAME = {k: v['name'] for k, v in D['ENEMY_TYPES'].items()}
 for k, drops in D['DROPS'].items():
+    if k in STORY_FOES: continue
     for d in drops: add_src(d['n'], 'Dropped by ' + ENAME.get(k, k))
-for k, v in D['SKULL_FOES'].items(): add_src('Human Skull', 'Dropped by ' + ENAME.get(k, k))
+for k, v in D['SKULL_FOES'].items():
+    if k not in STORY_FOES: add_src('Human Skull', 'Dropped by ' + ENAME.get(k, k))
 for q in D['QUEST_DEFS']:
     if q['id'] in STORY_QUESTS: continue
     for i in q['reward']['items']: add_src(i['name'], 'Reward: ' + q['title'])
