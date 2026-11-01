@@ -63,7 +63,7 @@ Tests are small scripts run by `tests/shot.py` with `LEGACY=1` (creates a charac
 GitHub Pages serves `index.html` from the repo root. The title screen shows the build and tells players when `version.json` is newer than their build.
 
 ## Roadmap (Broden's decisions)
-Done: core game, saves, maps, dialogue, dark pass, the Kind Stranger and Varro, the Hollowclaw and Deepcut, the Tidewrack (Chapter Two), farming and livestock, arsenal and gear art, the Hull town.
+Done: core game, saves, maps, dialogue, dark pass, the Kind Stranger and Varro, the Hollowclaw and Deepcut, the Tidewrack (Chapter Two), farming and livestock, arsenal and gear art, the Hull town, save export and import (`parts/ao_saveio.js`, pass 19).
 Next, in a likely order:
 1. **Chapter Three**: Marta's case and the long table. The Tidewrack console tells the player: "Go home. Ask Marta what is in the case." Priya answers the radio. The Cantor appears as antagonist.
 2. **Faction layer** for the Hull: guild membership with ranks, rep-gated quests, a bounty board at the Guard HQ. The Archive and the Pit are shuttered buildings waiting for content.

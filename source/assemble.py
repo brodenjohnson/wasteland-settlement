@@ -153,6 +153,7 @@ exec(open('pass15.py').read())
 exec(open('pass16.py').read())
 exec(open('pass17.py').read())
 exec(open('pass18.py').read())
+exec(open('pass19.py').read())
 
 # 7. main loop and init
 a = src.index('function frame(now) {')

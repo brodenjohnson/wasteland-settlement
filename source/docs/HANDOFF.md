@@ -33,8 +33,7 @@ Questions for Broden before building: what is in the case; whether the Cantor is
 - Townsfolk commute in straight lines along streets. Only the job board raises Hull reputation. Killing or stealing from townsfolk has no effect yet.
 - First-pass art: some creatures, calves and hatchlings, counters.
 - The Archive and the Pit are shuttered and ready for content.
-- No save export and import yet. It would protect friends' progress. Worth doing before more updates.
-- The quorum quest stays active after the console if the chapel step was skipped (the culvert sets it, fighting or talking sets it).
+- Save export and import is in (0.9.1). Tell friends to export before big updates.
 - Saves are per browser. Every update must keep older saves loading, and say so when it cannot.
 
 ## Where things live outside this repo
