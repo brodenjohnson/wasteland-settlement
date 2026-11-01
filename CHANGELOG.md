@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.0
+- Chapter Three: The Long Table. Go home and ask Marta what is in the case. Four new quests, a new boss, the Cantor's voice on the radio at night, and a decision at a long table that Chapter Four will remember.
+- The settlement panel shows how many people your valley could take in, and what is holding the number down.
+- Settlers can still only die if you turn that on in Settings.
+
 ## 0.9.3
 - The Hull is safe ground. Nothing ambushes you in town.
 - The Hull has a lot more life in it: rubble and rust along the ship, crates and planters outside the shops, market stalls in the plaza, washing lines between the homes, drum fires that burn at night, a working dock, and grime on every street.

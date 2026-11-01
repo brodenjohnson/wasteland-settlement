@@ -65,12 +65,11 @@ Tests are small scripts run by `tests/shot.py` with `LEGACY=1` (creates a charac
 GitHub Pages serves `index.html` from the repo root. The title screen shows the build and tells players when `version.json` is newer than their build.
 
 ## Roadmap (Broden's decisions)
-Done: core game, saves, maps, dialogue, dark pass, the Kind Stranger and Varro, the Hollowclaw and Deepcut, the Tidewrack (Chapter Two), farming and livestock, arsenal and gear art, the Hull town, save export and import (`parts/ao_saveio.js`, pass 19), the player wiki (0.9.2).
+Done: core game, saves, maps, dialogue, dark pass, the Kind Stranger and Varro, the Hollowclaw and Deepcut, the Tidewrack (Chapter Two), farming and livestock, arsenal and gear art, the Hull town, save export and import (`parts/ao_saveio.js`, pass 19), the player wiki (0.9.2), the Hull dressing and map-edge entrances (0.9.3), Chapter Three (0.10.0: `parts/as_chapter3.js`, `parts/dialogue_ch3.txt`).
 Next, in a likely order:
-1. **Chapter Three**: Marta's case and the long table. The Tidewrack console tells the player: "Go home. Ask Marta what is in the case." Priya answers the radio. The Cantor appears as antagonist.
+1. **Chapter Four**: the Cradle's power runs out, the Roster, the endings (Long Table, Ark, Mercy, the Cantor's way). Read the flags Chapter Three leaves (listed in `docs/STORY.md`).
 2. **Faction layer** for the Hull: guild membership with ranks, rep-gated quests, a bounty board at the Guard HQ. The Archive and the Pit are shuttered buildings waiting for content.
 3. **Per-area feel pass**: props, palettes and ambience for each region.
-4. **Chapter Four and endings**: the Roster choice (Long Table, Ark, Mercy, the Cantor's way).
-5. Later: torches and light, status effects and chems, companions (a dog), settler minds, frame suits (power armour equivalents), a possible Boston setting.
+4. Later: torches and light, status effects and chems, companions (a dog), settler minds, frame suits (power armour equivalents), a possible Boston setting.
 Known limits: animals only roam the main map and are not attacked by raids; commuting townsfolk walk straight along streets; only the job board raises Hull reputation; counters and some creature art are first-pass.
 See `docs/STORY.md` for the story and its decisions.

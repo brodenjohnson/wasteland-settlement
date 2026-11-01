@@ -24,7 +24,8 @@ def load_data():
 
 D = load_data()
 STORY = set(D['STORY_ITEMS'])
-STORY_QUESTS = {'note', 'pump', 'signal', 'stairs', 'stranger', 'lamplighter', 'quorum'}
+STORY_QUESTS = {'note', 'pump', 'signal', 'stairs', 'stranger', 'lamplighter', 'quorum', 'ch3_case', 'ch3_radio', 'ch3_listeners', 'ch3_table'}
+STORY_FOES = {'cantor'}
 STATIONS = D['STATION_NAMES']
 BOSS_WHERE = {'kingpin': 'Greybridge Depot', 'hollowclaw': 'Deepcut', 'wrackmother': 'The Tidewrack', 'chief': 'Raids (the warband)'}
 SCHED = {'shop': 'Works 8:00 to 18:00, then the cantina. Home by 22:00.', 'office': 'Works 8:00 to 17:00, then the cantina until 20:00.',
@@ -241,6 +242,7 @@ def lvl(k):
 def g_creatures(boss):
     out = []
     for k, t in D['ENEMY_TYPES'].items():
+        if k in STORY_FOES: continue
         isb = bool(t.get('boss')) or k in BOSS_WHERE
         if isb != boss: continue
         drops = ', '.join('%s (%s)' % (link(d['n']), pct(d['c'])) for d in D['DROPS'].get(k, []) if d['n'] not in STORY)

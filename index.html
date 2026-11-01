@@ -9472,7 +9472,7 @@ Object.assign(VALUE, { 'Kit: Weapon Bench': 70, 'Kit: Armour Bench': 65, 'Large 
    AN_VERSION: the build number, shown on the title screen, and a check that
    tells players when a newer version has been published.
    ===================================================================== */
-const BUILD = '0.9.3';
+const BUILD = '0.10.0';
 let newerBuild = null, versionCheckT = -999;
 function checkVersion() {
   if (!/^https?:/.test(location.protocol)) return;
@@ -9767,6 +9767,260 @@ function wikiWhere() {
   return out;
 }
 Object.assign(DBG, { wikiArt, wikiWhere, markHull, inTown, spotNear, decorKinds: () => decor.map(d => d.kind) });
+const CH3_TEXT = "// CHAPTER THREE: THE LONG TABLE\n// Same format as dialogue.txt. Chapter-specific effects (handled in as_chapter3.js):\n//   opencase  priyaquiet  priyabait  cantorwin  cantorfight  cantorspare  cantorkill  tablelean:X  ch3start\n\n// ---------------------------------------------------------------- MARTA AND THE CASE\n=== ch3_marta\n~ Marta is turning soil with her hands, the way she does when she is thinking. She sees you coming and keeps turning it.\nMarta: You've been to the coast. You've got salt in your hair and that look people get when the sea has told them something.\n* \"The recording at the door said to ask you what is in the case.\" => ch3_marta_ask\n\n=== ch3_marta_ask\nMarta: What case?\n~ She says it too quickly, and she does not look up.\n* [Memory 4] \"It's labelled 'Not for eating. Not yet.' That's my handwriting. You watched me write it.\" => ch3_marta_admit\n* [Honest] \"It said you'd pretend not to know. It said you know.\" => ch3_marta_admit | if flag:told_marta | do rep.trust+1\n* [Honest] \"It said you'd pretend not to know. It said you know.\" => ch3_marta_admit | if rep.trust>=2 & !flag:told_marta\n* \"Then I'll dig up every greenhouse in the valley until I find it.\" => ch3_marta_pushed\n* \"Never mind. Not today.\" => ch3_marta_later\n\n=== ch3_marta_later\nMarta: Not today suits me fine.\n~ She goes back to the soil. Her hands are not quite steady.\n\n=== ch3_marta_pushed\n@ rep.trust-1; log:You pushed Marta until she gave up the case\nMarta: You would, too. You were always like that. You'd make a plan and then you'd stand on it until it stopped moving.\n> ch3_marta_admit\n\n=== ch3_marta_admit\nMarta: ...Alright.\nMarta: It's been under my bed every night since I woke. Every time I moved, I moved it first. Before water. Before food.\nMarta: I never opened it. You told me not to. You were very clear, and you looked like someone who'd already done something they couldn't take back.\n@ give:Sealed Case; event:ch3:marta; log:Marta gave you the case she has carried since she woke\n~ She puts it in your hands. Black, brass corners, a strip of tape across the lid in your handwriting: NOT FOR EATING. NOT YET.\nMarta: It's yours. It was always yours. I'm only the bed it slept under.\n* \"Open it with me.\" => ch3_marta_together\n* \"I'll open it on my own.\" => ch3_marta_alone\n* [Mercy] \"Thank you for carrying it.\" => ch3_marta_thanks\n\n=== ch3_marta_thanks\n@ rep.trust+1; rep.mercy+1\nMarta: Don't. If you thank me I'll cry, and I've only just stopped.\n* \"Open it with me.\" => ch3_marta_together\n* \"I'll open it on my own.\" => ch3_marta_alone\n\n=== ch3_marta_together\n@ rep.trust+1; flag:case_with_marta; opencase; log:You opened the case with Marta beside you\n~ The tape comes away like it has been waiting to. Inside, packed in grey foam: a thick bound plan, a sheaf of typed minutes with half the words blacked out, and a single card with a long number on it.\n~ Marta reads the cover of the plan over your shoulder. She reads it twice.\nMarta: The Long Table. ...That's my greenhouse on the first page. That's the valley.\nMarta: You were going to feed them. All of them. Not all at once.\n~ Your journal has the papers. Read them when you are ready. You are not sure you are.\n\n=== ch3_marta_alone\n@ rep.trust-1; log:You took the case away to open alone\nMarta: Of course. Go on, then.\n~ She does not watch you leave. You can feel her not watching.\n~ The case is in your bag. Open it when you are ready.\n\n// when the case is opened from the bag\n=== ch3_case_open\n@ opencase\n~ The tape comes away like it has been waiting to. Inside, packed in grey foam: a thick bound plan, a sheaf of typed minutes with half the words blacked out, and a single card with a long number on it.\n~ Your journal has the papers. Read them when you are ready.\n\n// if Marta is gone, the case is where she kept it\n=== ch3_case_alone\n~ The bunk is empty. The floorboard under it is loose, and has been lifted and put back so many times the nails have given up.\n@ give:Sealed Case; event:ch3:marta; log:You found Marta's case under her empty bunk\n~ Underneath: a black case with brass corners. Tape across the lid in your handwriting. NOT FOR EATING. NOT YET.\n\n// ---------------------------------------------------------------- ECHOES FROM THE CASE\n=== echo_The Long Table\n~ A drafting table under a green lamp. Your hand, ruling lines. Twelve beds. Then forty. Then two hundred.\n~ Every stage has a box beside it that says WATER and a box that says FOOD, and you will not let yourself draw the next stage until both boxes are filled in.\n~ Somebody asks how long it will take. You say: as long as it takes. They do not like that answer. You did not expect them to.\n\n=== echo_Minutes of the Vote\n~ A long room with no windows and good chairs. Paper being passed down a table, hand to hand, and nobody reading it.\n~ A man at the end says \"all those in favour\" in the voice of someone who has already counted.\n~ Hands go up. You are watching your own hand to see what it does. You do not remember what it does.\n\n=== echo_Director Code Card\n~ A card being pressed into your palm. A woman's voice, tired and exact: \"Don't carry it with the roster. Promise me.\"\n~ You promise. You are already wondering why.\n\n// ---------------------------------------------------------------- THE CANTOR ON THE RADIO\n=== cantor_sermon_1\n~ Your tag crackles against your wrist. Not the call sign this time. A man's voice, warm, unhurried, the voice of somebody who used to read the weather.\nCantor: Good evening, listeners. Eleven tags, one answering. We have all heard it. Some of us have heard it every night for a very long time.\nCantor: The voice under the sea is calling its family home. I only ask the obvious question. Why only eleven?\n~ The signal folds back into static.\n\n=== cantor_sermon_2\n~ The tag again. The same warm voice.\nCantor: A door that opens for some is not a door. It is a wall with a guest list.\nCantor: Three thousand sleeping under the breakwater. Somebody chose them. Somebody chose us, too. We were chosen to be outside.\nCantor: I would like to meet whoever does the choosing. I think they are walking about. I think they have been to the door.\n\n=== cantor_sermon_3\n~ The tag. He sounds closer tonight, which is not possible, and you check anyway.\nCantor: To the one who carries the eleventh tag. I know you can hear me. You stood at the door and you did not open it.\nCantor: That was a choice. Everything is a choice. Come to Chapel Row and tell us why you made it. We will listen. Listening is what we do.\n\n=== cantor_sermon_4\n~ The tag. Only a few words this time, very gently.\nCantor: For everyone, or for no one. Goodnight, listeners.\n\n// ---------------------------------------------------------------- PRIYA AND THE RADIO\n=== ch3_priya\n~ Priya is sitting with a radio set in pieces on her knees. She has a soldering iron in one hand and has forgotten it is hot.\nPriya: You've got the face. Somebody's told you something about the radio.\n* \"Dex heard nine voices on the radio, then ten. Was the tenth you?\" => ch3_priya_admit\n* \"The broadcast knows where I am. Somebody is helping it.\" => ch3_priya_admit\n\n=== ch3_priya_admit\nPriya: ...Yes.\nPriya: Every night at the same time it reads the call sign. Eleven tags, one answering. And every night, nobody answered. For months. It just kept asking.\nPriya: So I answered. I read it back. I didn't think it mattered. I thought it was a machine being lonely and I knew how that felt.\nPriya: Dex counted the voices. Of course he did. He counts everything.\nPriya: It matters, doesn't it. The raiders listen to it too. And the Listeners. They follow the reply. They follow me. And I've been sitting next to you.\n@ event:ch3:priya; log:Priya told you she has been answering the broadcast every night\n* \"Stop answering. Let it go quiet.\" => ch3_priya_quiet\n* [Ruthless] \"Keep answering. If they're coming, I want them coming to us, where I can see them.\" => ch3_priya_bait\n* [Memory 3] \"On the tape there's a voice you said you'd heard in person. Whose?\" => ch3_priya_voice\n\n=== ch3_priya_voice\nPriya: I said I'd heard it. I didn't say I'd tell you.\nPriya: Not yet. When you've read whatever you're carrying, ask me again, and look at me when you do.\n* \"Stop answering. Let it go quiet.\" => ch3_priya_quiet\n* [Ruthless] \"Keep answering. If they're coming, I want them coming to us, where I can see them.\" => ch3_priya_bait\n\n=== ch3_priya_quiet\n@ priyaquiet; rep.trust+1; rep.mercy+1; log:You asked Priya to stop answering the broadcast\nPriya: Alright. It'll keep asking. I'll have to listen to it ask.\n~ She pulls a wire out of the set, very carefully, the way you would take a splinter out of a child.\nPriya: They've already heard me, though. They'll come anyway. Fewer of them, maybe.\n\n=== ch3_priya_bait\n@ priyabait; rep.trust-1; log:You told Priya to keep answering and draw the Listeners in\nPriya: You want me to be the lamp in the window.\nPriya: Fine. But when they come, you're the one standing at the door. Not me.\n\n// ---------------------------------------------------------------- BOONE (optional)\n=== ch3_boone\nBoone: You've been to the coast. Did you meet her? Grey hair, never says anything she doesn't have to.\n* \"I met her.\" => ch3_boone_2\n* \"Who?\" => ch3_boone_2\n\n=== ch3_boone_2\nBoone: I was supposed to be watching you. Unit eleven. That was my whole job. Watch eleven, don't sleep.\nBoone: I slept. I woke up with a tag and a bad back and you were gone and I have been carrying that around like a stone in my boot.\nBoone: Last night I remembered something. Her, standing over me, before I went under. She said \"sorry, son,\" and she put me under first. On purpose. So I wouldn't see.\n* [Mercy] \"Then it wasn't your fault.\" => ch3_boone_mercy\n* [Honest] \"Then she lied to you, and so did I.\" => ch3_boone_honest\n\n=== ch3_boone_mercy\n@ rep.trust+1; rep.mercy+1; flag:boone_forgiven; log:You told Boone it was never his fault\nBoone: I've forgiven her already. That was easy. It's me I'm having trouble with.\n~ He nods at you, once, the way you would nod at a door you had decided not to kick in.\n\n=== ch3_boone_honest\n@ rep.trust+2; flag:boone_forgiven; log:You told Boone the truth about the watch\nBoone: Yeah. Well. Everyone lies to the security guy. It's practically the job.\n~ He laughs, and it surprises both of you.\n\n// ---------------------------------------------------------------- THE LISTENERS COME TO THE VALLEY\n=== ch3_listeners_peace\n~ At dusk they come out of the dark in ones and twos and sit down in a ring outside your camp. Twenty, maybe more. Nobody speaks. A few of them are humming the call sign.\n~ One of them stands. A woman with a bell on a pole, which she lays down on the ground in front of her before she says anything.\nListener: We are not here to take anything. We came because the voice comes from here now. We wanted to see who it calls.\nListener: The Cantor asks for you. Chapel Row, on the coast. He says he will listen first. He does not always.\n@ event:ch3:listeners; rep.listeners+1; log:The Listeners came to your camp in peace and asked you to meet the Cantor\n~ In the morning they are gone. They have left a tin can on a string tied to your gate. It rattles when the wind blows. You leave it there.\n\n=== ch3_listeners_after\n~ The last of them is down. The camp smells of smoke and the bells are lying in the dirt where they fell.\n~ One of them, dying, says something very quietly. You lean down to hear it. It is the call sign.\n@ log:The Listeners came to your camp singing, and you met them at the wall\n\n// ---------------------------------------------------------------- THE CANTOR\n=== ch3_cantor\n~ The chapel is a net loft with pews made from hull planks. Tin cans hang from the rafters on strings, hundreds of them, and every one of them turns slowly as you walk in.\n~ The Cantor is older than his voice. He is sitting at the front with a radio in his lap like a cat, and he does not get up.\nCantor: There you are. You took your time. People who carry the eleventh tag generally do.\nCantor: Here is all I want. The door opens for everyone, or for no one. Not for the guest list. Not for you and your ten and whoever you decide deserves a bed.\nCantor: Tell me why I'm wrong. I am listening. It is the only thing I have ever been good at.\n* [Memory 5] \"It isn't a voice. It's a schedule. A wake protocol that never got switched off. I know, because I wrote the schedule.\" => ch3_cantor_win | if flag:case_opened\n* \"Everyone? The valley can feed and house a fraction of them. Open the door for everyone and most of them die on the floor of the vault.\" => ch3_cantor_capacity\n* \"Your people already let me through once. Ask them whether I lied.\" => ch3_cantor_win | if rep.listeners>=3\n* [Lie] \"There's nobody in there. The Cradle is empty. It's a recording calling an empty room.\" => ch3_cantor_lie\n* \"Then we're done talking.\" => ch3_cantor_fight\n\n=== ch3_cantor_capacity\nCantor: A fraction. How large a fraction?\n~ You tell him. He listens to the number all the way to the end.\n> ch3_cantor_capweigh\n\n=== ch3_cantor_capweigh\n* \"Enough to start. Not enough to be careless.\" => ch3_cantor_win | if capacity>=20\n* \"Not many. Not yet. That's why the door stays shut.\" => ch3_cantor_lose | if !capacity>=20\n\n=== ch3_cantor_lose\nCantor: Not many. Not yet. You hear yourself? That is a guest list with a waiting room.\nCantor: No. I don't think I believe you. I think you like being the one with the key.\n> ch3_cantor_fight\n\n=== ch3_cantor_lie\nCantor: Empty.\n~ He turns the radio in his lap so that the dial faces you. It is tuned to the call sign. Under the call sign, very faint, you can hear something breathing in its sleep. Three thousand somethings.\nCantor: I have been listening to that room for longer than you have been awake. Don't.\n> ch3_cantor_fight\n\n=== ch3_cantor_win\n@ cantorwin; rep.listeners+2; log:You argued the Cantor down in his own chapel\nCantor: ...Huh.\n~ He is quiet for a long time. The cans turn on their strings.\nCantor: I don't agree with you. I want that understood. But I believe you believe it, and that is more than the radio has ever given me.\nCantor: When the power under the breakwater runs down, I will be standing at that door. So will my people. You had better be there with an answer, not a plan.\n~ He goes back to listening. You are, apparently, dismissed.\n\n=== ch3_cantor_fight\n@ cantorfight; rep.listeners-2; log:Talking with the Cantor turned into a fight\nCantor: Then we'll ask the bells.\n~ He stands, and he is a great deal bigger standing up. From the back of the loft, somebody starts to ring.\n\n=== ch3_cantor_beaten\n~ The Cantor is down on one knee with his bell pole across his lap. The cans have stopped turning.\nCantor: Well. The voice did say you'd be stubborn.\n* [Mercy] \"Go. Take your people off the coast for a while.\" => ch3_cantor_spare\n* [Ruthless] Finish it. => ch3_cantor_kill\n\n=== ch3_cantor_spare\n@ cantorspare; rep.mercy+2; rep.listeners+1; log:You beat the Cantor and let him walk\nCantor: For a while. Not for good. Nobody leaves this coast for good.\n~ He gets up slowly, picks up his radio, and goes. He does not look back. Several of the cans follow him with their open mouths.\n\n=== ch3_cantor_kill\n@ cantorkill; rep.mercy-2; rep.listeners-3; log:You killed the Cantor in his own chapel\n~ It does not take long. Afterwards the radio in his lap goes on reading the call sign to nobody.\n~ You switch it off. It is the first time anyone has, and the silence is enormous.\n\n// ---------------------------------------------------------------- THE LONG TABLE\n// ch3_table_seats is written at runtime (who came, and the number), then runs on into this\n=== ch3_table\n~ You lay the plan open in the middle, and the minutes beside it, and the card face down.\nYou: There are three thousand people asleep under the breakwater. The power that keeps them asleep is running out. I chose this valley over them once. I'd like to do the sum again, with you this time.\n* \"We wake them in stages, as the valley grows. Slowly. Every one of them gets a bed before they get a name.\" => ch3_table_long\n* \"We wake as many as we can feed, as soon as we can. The rest take their chances.\" => ch3_table_ark\n* [Mercy] \"Maybe we let them sleep. Maybe the kindest thing is to let it end quietly.\" => ch3_table_mercy\n\n=== ch3_table_long\n@ tablelean:long; rep.trust+1; log:At the long table you chose to wake the sleepers in stages, as the valley grows\n~ Nobody cheers. It is not that kind of decision. But somebody pours water for everybody, and that will do.\n> ch3_table_end\n\n=== ch3_table_ark\n@ tablelean:ark; log:At the long table you chose to wake as many as the valley can hold, as soon as it can\n~ A few of them nod. A few of them look at the number again, and then at the people next to them, and do the sum on who would be giving up a bed.\n> ch3_table_end\n\n=== ch3_table_mercy\n@ tablelean:mercy; rep.mercy+1; log:At the long table you wondered aloud whether to let the sleepers go\n~ Nobody says anything for a long time. Then somebody says \"that's not ours to decide,\" and somebody else says \"then whose is it,\" and that is the rest of the evening.\n> ch3_table_end\n\n=== ch3_table_end\n@ flag:chapter_three_done; event:ch3:table; xp:500\n~ Later, when they have gone to bed, you sit at the long table on your own with the card in your hand.\n~ It says DIRECTOR ONLY on one side. On the other, in handwriting you know better than your own face: \"Do the sum again. Then do it once more, for the ones who aren't on the list.\"\n~ You do not know yet what that means. You are going to find out. Under the breakwater, the lights are getting dimmer.\n";
+/* =====================================================================
+   AS_CHAPTER3: The Long Table. Marta's case, the capacity of the valley,
+   the Cantor on the radio, Priya's answer, the Listeners at the gate, the
+   Cantor in his chapel, and the ten at the table. The writing is in
+   parts/dialogue_ch3.txt.
+   ===================================================================== */
+parseScripts(CH3_TEXT);
+const TEN = new Set(SURVIVOR_DEFS.map(d => d.name));
+
+/* ---------- The case and its papers ---------- */
+for (const [n, col] of [['Sealed Case', '#22222a'], ['The Long Table', '#d8d0b8'], ['Minutes of the Vote', '#c8c0a8'], ['Director Code Card', '#e8e0c8']]) { STORY_ITEMS.add(n); ITEM_STACK[n] = 1; ITEM_COL[n] = col; }
+ITEM_DESC['Sealed Case'] = 'Black, brass corners, tape across the lid in your handwriting. Right-click it to open it.';
+for (const n of ['The Long Table', 'Minutes of the Vote', 'Director Code Card']) ITEM_DESC[n] = 'Readable. Open your bag and right-click it.';
+Object.assign(DOCS, {
+  'The Long Table': { title: 'The Long Table: a plan in stages', text: 'A plan for receiving the Cradle, one stage at a time.\n\nStage one. Twelve beds. Clean water for forty. A wall that holds. Wake twelve: the medics and the cooks first, because they will keep the rest alive.\n\nStage two. Forty beds. Two clean water sources. A clinic. Wake forty.\n\nStage three and on. Do not draw the next stage until the boxes for the last one are filled in. WATER. FOOD. BEDS. WALLS. If a box is empty, nobody new sits down.\n\nThe table is long because it has to be. Set a place before you wake anyone to sit at it.\n\nPlant the seeds. Keep them alive. They matter more than you do.' },
+  'Minutes of the Vote': { title: 'Continuity Board, minutes (blacked out)', text: 'EXTRAORDINARY SESSION. CRADLE ALLOCATION.\n\nPresent: ████████, ████████, ████████ and others.\n\nMotion: that places in the Cradle be allocated in three tiers. Tier one: ████████. Tier two: ████████. Tier three: staff and dependants, as available.\n\nDiscussion: ██████████████████████. The Chair noted that the allocation "reflects contribution". It was not recorded to what.\n\nVote: for, ██. Against, ██. Abstaining, ██. Carried.\n\nSigned for the Board: ████████. Countersigned: ████████.\n\nThe names were blacked out by hand, with a marker, carefully. Whoever did it wanted the names gone and the tiers kept.' },
+  'Director Code Card': { title: 'A laminated card', text: 'DIRECTOR OVERRIDE. FINAL AUTHORISATION.\n\n4471 0911 2306\n\nDIRECTOR ONLY. DO NOT CARRY WITH THE ROSTER.\n\nOn the back, in your handwriting: Do the sum again. Then do it once more, for the ones who aren’t on the list.' }
+});
+{ const o = useItem; useItem = function (i) {
+  const s = state.player.inventory[i];
+  if (s && s.name === 'Sealed Case') { closePanels(); startDialogue('ch3_case_open'); return; }
+  o(i);
+}; }
+
+/* ---------- The capacity of the valley: what the Long Table is measured against ---------- */
+function wastesView() {
+  if (state.map === 'wastes') return { structs, tilled, settlers };
+  const s = STASH.wastes; return s ? { structs: s.structs, tilled: s.arrays.tilled, settlers: s.settlers } : null;
+}
+function capacity() {
+  const v = wastesView(); if (!v || !state.hearth) return { total: 0, beds: 0, food: 0, water: 0, safety: 0 };
+  const n = types => { let c = 0; for (const [, st] of v.structs) if (types.includes(st.type)) c++; return c; };
+  let till = 0; for (let i = 0; i < v.tilled.length; i++) if (v.tilled[i]) till++;
+  const beds = n(['bunk']) * 3;
+  const food = Math.round(till * 0.6 + animals.length * 4);
+  const water = n(['purifier']) * 25 + n(['sink']) * 5;
+  const safety = n(['wall', 'scrapwall', 'stonewall', 'steelwall', 'tyrewall']) + n(['gate']) * 3 + n(['guardpost']) * 12 + n(['turret']) * 15 + n(['trap']) * 2 + v.settlers.filter(s => s.job === 'Guard').length * 8;
+  return { total: Math.min(beds, food, water, safety), beds, food, water, safety };
+}
+{ const o = evalAtom; evalAtom = function (t) {
+  const m = t.match(/^capacity(>=|<=|>|<)(\d+)$/);
+  if (m) { const v = capacity().total, k = +m[2]; return m[1] === '>=' ? v >= k : m[1] === '<=' ? v <= k : m[1] === '>' ? v > k : v < k; }
+  return o(t);
+}; }
+{ const o = drawSettlement; drawSettlement = function (w, h) {
+  o(w, h);
+  if (!state.qflags.case_opened) return;
+  const pw = 900, ph = 540, px = Math.round(w / 2 - pw / 2), py = Math.max(46, Math.round(h / 2 - ph / 2)), c = capacity();
+  const bx = px + 14, by = py + ph - 178, bw = 236, bh = 140;
+  ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(bx, by, bw, bh); ctx.strokeStyle = 'rgba(255,211,107,0.5)'; ctx.strokeRect(bx + 0.5, by + 0.5, bw - 1, bh - 1);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.font = '11px ' + MONO; ctx.fillStyle = '#ffe9b0'; ctx.fillText('The Long Table', bx + 10, by + 14);
+  ctx.font = '10px ' + MONO; ctx.fillStyle = '#e8dcc0'; ctx.fillText('Could take in about ' + c.total + ' of the', bx + 10, by + 32); ctx.fillText('3,012 sleepers today.', bx + 10, by + 46);
+  const parts = [['Beds', c.beds], ['Food', c.food], ['Water', c.water], ['Safety', c.safety]], lo = Math.min(...parts.map(p => p[1])), mx = Math.max(40, ...parts.map(p => p[1]));
+  parts.forEach(([k, v], j) => {
+    const x = bx + 10 + (j % 2) * 110, y = by + 66 + Math.floor(j / 2) * 30;
+    ctx.fillStyle = v === lo ? '#ff9a6a' : '#b8a890'; ctx.fillText(k + ' ' + v, x, y);
+    ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fillRect(x, y + 9, 96, 5); ctx.fillStyle = v === lo ? '#e8704a' : '#7fbf7f'; ctx.fillRect(x, y + 9, 96 * Math.min(1, v / mx), 5);
+  });
+  ctx.fillStyle = '#8a7a64'; ctx.fillText('The weakest sets the number.', bx + 10, by + 128);
+}; }
+
+/* ---------- The quests ---------- */
+function npcAt(name) {
+  if (state.map !== 'wastes') return null;
+  return settlers.find(s => s.name === name) || survivors.find(s => s.name === name) || null;
+}
+function npcGone(name) {
+  if (state.map !== 'wastes') return false;
+  return !npcAt(name) && !state.downed.some(d => d.s.name === name);
+}
+const npcTarget = name => () => { const n = npcAt(name); return n ? { x: n.x, y: n.y, label: name } : null; };
+function chapelTarget() {
+  if (state.map === 'tidewrack') return tideTarget(4);
+  const tp = state.towerPortal; return state.map === 'wastes' && tp ? { x: (tp.x + 0.5) * TS, y: (tp.y + 0.5) * TS, label: 'Down to the coast' } : null;
+}
+QUEST_DEFS.push(
+  { id: 'ch3_case', title: 'What Marta Knows', giver: 'Your own voice', desc: 'The recording at the Cradle door told you to go home and ask Marta what is in the case. It said she would pretend not to know.',
+    steps: [{ id: 'find', text: 'Ask Marta Voss about the case', event: 'ch3:marta', target: () => npcGone('Marta Voss') && state.hearth ? { x: (state.hearth.x + 0.5) * TS, y: (state.hearth.y + 0.5) * TS, label: 'Her bunk' } : npcTarget('Marta Voss')() },
+            { id: 'open', text: 'Open the case', event: 'ch3:case' }],
+    reward: { xp: 200, items: [] }, next: ['ch3_radio'] },
+  { id: 'ch3_radio', title: 'Ten Voices', giver: 'Dex Harlan, without meaning to', desc: 'Dex heard nine voices on the radio at night, then ten. Something near you has been answering the broadcast, and whatever follows the broadcast follows the answer.',
+    steps: [{ id: 'priya', text: 'Ask Priya Nair about the radio', event: 'ch3:priya', target: npcTarget('Priya Nair') }],
+    reward: { xp: 150, items: [] }, next: ['ch3_listeners'] },
+  { id: 'ch3_listeners', title: 'They Come to Listen', giver: 'The Cantor', desc: 'The Listeners have heard the answer. They are coming to see who it calls. After that, the Cantor wants a word, in his own chapel.',
+    steps: [{ id: 'arrive', text: 'Be at your camp after dark. They are coming.', event: 'ch3:listeners', target: () => state.map === 'wastes' && state.hearth ? { x: (state.hearth.x + 0.5) * TS, y: (state.hearth.y + 0.5) * TS, label: 'Your camp' } : null },
+            { id: 'chapel', text: 'Face the Cantor at Chapel Row', event: 'ch3:cantor', target: chapelTarget }],
+    reward: { xp: 300, items: [{ name: 'Medkit', qty: 2 }] }, next: ['ch3_table'] },
+  { id: 'ch3_table', title: 'The Long Table', giver: 'The plan in the case', desc: 'Set a long table at home and sit the ten down. Do the sum again, with them this time.',
+    steps: [{ id: 'table', text: 'Build a Table in your camp', check: () => { const v = wastesView(); if (!v) return false; for (const [, st] of v.structs) if (st.type === 'table') return true; return false; } },
+            { id: 'sit', text: 'Talk to one of the ten and call everyone to the table', event: 'ch3:table' }],
+    reward: { xp: 100, items: [] }, next: [] }
+);
+
+/* ---------- Effects the chapter's script uses ---------- */
+{ const o = applyEffect; applyEffect = function (e, c) {
+  let m;
+  if (e === 'opencase') {
+    if (state.qflags.case_opened) return;
+    state.qflags.case_opened = true; if (countItem('Sealed Case')) takeItems({ 'Sealed Case': 1 });
+    for (const n of ['The Long Table', 'Minutes of the Vote', 'Director Code Card']) { if (spaceFor(n, 1)) addItem(n, 1); else state.drops.push({ x: state.player.x, y: state.player.y + 6, name: n, qty: 1, t: 0 }); }
+    questEvent('ch3:case'); sfx('pickup');
+  } else if (e === 'priyaquiet') state.qflags.priya_quiet = true;
+  else if (e === 'priyabait') state.qflags.priya_bait = true;
+  else if (e === 'cantorwin') { state.qflags.cantor_debated = true; questEvent('ch3:cantor'); }
+  else if (e === 'cantorfight') cantorFight(c && c.npc);
+  else if (e === 'cantorspare') { state.qflags.cantor_spared = true; if (c && c.npc) removeNpc(c.npc); questEvent('ch3:cantor'); }
+  else if (e === 'cantorkill') { state.qflags.cantor_dead = true; if (c && c.npc) removeNpc(c.npc); questEvent('ch3:cantor'); }
+  else if ((m = e.match(/^tablelean:(\w+)$/))) state.qflags['lean_' + m[1]] = true;
+  else o(e, c);
+}; }
+
+/* ---------- Talking to the ten ---------- */
+function tableSeats() {
+  const here = new Set(settlers.map(s => s.name));
+  const LINES = {
+    'Marta Voss': 'Marta sits nearest the plan, as if it might need watering.', 'Dex Harlan': 'Dex counts the chairs. Then he counts them again.',
+    'Wren Alvarez': 'Wren sits with her back to the wall, where she can see the gate.', 'Old Tomas': 'Old Tomas puts a jar of honey in the middle without a word.',
+    'Ripley Cho': 'Ripley reads the water figures in the plan and starts checking the arithmetic in the margin.', 'Sam Oduya': 'Sam takes the chair at the far end, nearest the road, out of habit.',
+    'Lena Fischer': 'Lena has brought bandages. Nobody asks why.', 'Boone Keller': 'Boone stands behind the last chair until somebody tells him to sit.',
+    'Priya Nair': state.qflags.priya_quiet ? 'Priya keeps one ear turned towards a radio she is not listening to any more.' : 'Priya has the radio in her lap. It is still answering.',
+    'Juno Park': 'Juno sets a place for everyone, then one more, and does not say who it is for.' };
+  const c = capacity(), sat = [...TEN].filter(n => here.has(n));
+  let t = '=== ch3_table_seats\n~ You put the table in the middle of the camp, where the light is. Nobody sits at the head of it. Nobody wants to.\n';
+  if (!sat.length) t += '~ Nobody comes. None of the ten live here. You sit at the long table on your own, which is its own kind of answer.\n';
+  for (const n of sat) t += '~ ' + LINES[n] + '\n';
+  t += '~ You read them the number. The valley could feed, water, house and keep safe about ' + c.total + ' people today, if the door opened tomorrow. ' + c.total + ' of three thousand and twelve.\n';
+  const lo = [['beds', c.beds], ['food', c.food], ['water', c.water], ['safety', c.safety]].sort((a, b) => a[1] - b[1])[0][0];
+  t += '~ Somebody points out that it is the ' + lo + ' holding the number down. Somebody always does.\n> ch3_table\n';
+  parseScripts(t);
+}
+{ const o = drawTalk; drawTalk = function (w, h) {
+  o(w, h);
+  const n = state.talk;
+  if (!n || !TEN.has(n.name) || n.scared || state.dlg) return;
+  const pw = 600, ph = 184, px = Math.round(w / 2 - pw / 2), py = h - ph - 70, by = py + ph - 64;
+  const qa = id => state.quests[id] && state.quests[id].status === 'active';
+  let label = null, go = null;
+  if (n.name === 'Marta Voss' && qa('ch3_case') && !qf('ch3:marta')) { label = 'Ask about the case'; go = 'ch3_marta'; }
+  else if (n.name === 'Priya Nair' && qa('ch3_radio') && !qf('ch3:priya')) { label = 'Ask about the radio'; go = 'ch3_priya'; }
+  else if (n.name === 'Boone Keller' && state.qflags.case_opened && !state.qflags.boone_asked) { label = 'Ask about the watch'; go = 'ch3_boone'; }
+  else if (n.kind === 'settler' && qa('ch3_table') && state.quests.ch3_table.done.table && !qf('ch3:table')) { label = 'Call everyone to the table'; go = 'ch3_table_seats'; }
+  if (!label) return;
+  button(px + 12, by, 300, 22, label, () => {
+    if (go === 'ch3_boone') state.qflags.boone_asked = true;
+    if (go === 'ch3_table_seats') tableSeats();
+    state.talk = null; startDialogue(go, n);
+  }, true);
+}; }
+
+/* ---------- The Listeners: a raid that sings, or a ring of people sitting outside your wall ---------- */
+RAID_KINDS.listeners = { name: 'The Listeners, singing', mult: 1, minDay: 99999, hint: 'They are not here to steal. Do not let them reach the walls.', pool: () => ['zealot', 'zealot', 'zealot', 'scrapper'] };
+{ const o = pickRaid; pickRaid = function (day) {
+  if (state.qflags.listener_raid_pending) { delete state.qflags.listener_raid_pending; RAID_KINDS.listeners.mult = state.qflags.priya_bait ? 1.5 : state.qflags.priya_quiet ? 0.7 : 1; return RAID_KINDS.listeners; }
+  return o(day);
+}; }
+{ const o = questEvent; questEvent = function (name) {
+  o(name);
+  if (name === 'raidEnd' && state.qflags.listener_raid) {
+    delete state.qflags.listener_raid; state.qflags.listeners_fought = true;
+    const fl = state.mapFlags.tidewrack = state.mapFlags.tidewrack || {}; fl.chapelOpen = true;
+    o('ch3:listeners'); setTimeout(() => { if (!state.dlg) startDialogue('ch3_listeners_after'); }, 600);
+    toast('A bell pole lies in the dirt with a strip of cloth tied to it. CHAPEL ROW. HE IS WAITING.', 6);
+  }
+}; }
+
+/* ---------- The Cantor in his chapel ---------- */
+Object.assign(ENEMY_TYPES, { cantor: { name: 'The Cantor', hp: 640, dmg: 15, speed: 44, size: 13, aggro: 300, atkCd: 1.1, xp: 260, structMult: 2, boss: true } });
+Object.assign(ENEMY_SPR, { cantor: { w: 24, h: 34, paint: (c, f) => { paintHuman2(c, f, { legs: '#2a2a30', body: '#d8d0bc', skin: '#a88a72', eye: '#14120f', hood: '#c8c0a8', accent: '#c8a040', club: true, bulk: true }); R(c, '#c8a040', 10, 13, 4, 3); R(c, '#8a6a20', 11, 15, 2, 1); } } });
+Object.assign(LVL_OFF, { cantor: [4, 6] });
+DROPS.cantor = [{ n: 'Caps', c: 1, a: 60, b: 110 }, { n: 'Medkit', c: 1, a: 1, b: 2 }, { n: 'Human Skull', c: 1, a: 1, b: 1 }];
+CREATURE_LORE.cantor = 'He used to read the weather on a company radio. Now he reads the broadcast, and he has never once been wrong about what it wants.';
+function cantorNpc(x, y, beaten) {
+  return { id: beaten ? 962 : 961, kind: 'survivor', cantor: true, beaten: !!beaten, name: 'The Cantor', bio: 'Older than his voice. He listens with his whole face.', skills: { farm: 0, guard: 3, haul: 0 },
+    look: npcLook(961), x, y, home: { x, y }, wander: 0, wx: x, wy: y, dirx: -1, walkT: 0, scared: false };
+}
+{ const o = MAPDEFS.tidewrack.setup; MAPDEFS.tidewrack.setup = function (rooms) {
+  const q = state.quests.ch3_listeners, live = q && q.status === 'active' && q.done.arrive && !qf('ch3:cantor');
+  if (live) { const fl = state.mapFlags.tidewrack = state.mapFlags.tidewrack || {}; fl.chapelOpen = true; }
+  o.call(this, rooms);
+  const r4 = rooms[4];
+  if (r4 && ((live && !state.qflags.cantor_fighting) || state.qflags.cantor_debated)) survivors.push(cantorNpc((r4.cx + 0.5) * TS, (r4.cy - 1.5) * TS));
+}; }
+function cantorFight(npc) {
+  const x = npc ? npc.x : state.player.x + 60, y = npc ? npc.y : state.player.y;
+  if (npc) removeNpc(npc);
+  state.qflags.cantor_fighting = true;
+  const b = spawnEnemy('cantor', x, y, {}); b.aggro = true;
+  for (let k = 0; k < 3; k++) { const z = spawnEnemy('zealot', x + (k - 1) * 40, y + 50, {}); z.aggro = true; }
+  sfx('horn'); state.shakeT = 0.4;
+}
+{ const o = updateEnemies; updateEnemies = function (dt) {
+  for (const e of enemies) {
+    if (e.type !== 'cantor' || e.hp <= 0) continue;
+    const mx = e.maxHp || ENEMY_TYPES.cantor.hp;
+    if (!e.bells && e.hp < mx * 0.5) { e.bells = true; for (let k = 0; k < 2; k++) { const z = spawnEnemy('zealot', e.x + (k ? 50 : -50), e.y - 30, {}); z.aggro = true; } toast('The Cantor rings his bell. More of them come out of the pews.', 3.5); sfx('horn'); }
+    if (!e.down && e.hp <= mx * 0.15) {
+      e.down = true; enemies.splice(enemies.indexOf(e), 1);
+      survivors.push(cantorNpc(e.x, e.y, true)); delete state.qflags.cantor_fighting;
+      toast('The Cantor goes down on one knee. The bells stop.', 4); sfx('thunder'); break;
+    }
+  }
+  o(dt);
+}; }
+{ const o = killEnemy; killEnemy = function (e) { o(e); if (e.type === 'cantor' && !e.down) { state.qflags.cantor_dead = true; delete state.qflags.cantor_fighting; questEvent('ch3:cantor'); toast('The Cantor is dead. Somewhere, a radio goes on reading the call sign to nobody.', 5); } }; }
+{ const o = openTalk; openTalk = function (npc) {
+  if (npc && npc.cantor) {
+    if (npc.beaten) { startDialogue('ch3_cantor_beaten', npc); return; }
+    if (qf('ch3:cantor')) { toast('The Cantor is listening to the radio. He does not look up.', 3); return; }
+    startDialogue('ch3_cantor', npc); return;
+  }
+  o(npc);
+}; }
+function drawCantorBar(w) {
+  const b = enemies.find(e => e.type === 'cantor' && Math.hypot(e.x - state.player.x, e.y - state.player.y) < 420);
+  if (!b || state.title) return;
+  const mx = b.maxHp || ENEMY_TYPES.cantor.hp, f = Math.max(0, b.hp / mx), bw = 360, x = Math.round(w / 2 - bw / 2), y = 64;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); panel(x - 8, y - 8, bw + 16, 34, 0.9);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '11px ' + MONO; ctx.fillStyle = '#ffe9b0'; ctx.fillText('The Cantor', w / 2, y + 4);
+  ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(x, y + 14, bw, 6); ctx.fillStyle = b.bells ? '#ff4a3a' : '#c8a040'; ctx.fillRect(x, y + 14, bw * f, 6);
+}
+{ const o = drawStorm; drawStorm = function () { o(); drawCantorBar(window.innerWidth); }; }
+
+/* ---------- The chapter's clock: start it, run the sermons, send the Listeners ---------- */
+const qActive = id => state.quests[id] && state.quests[id].status === 'active';
+{ const o = questTick; questTick = function () {
+  o();
+  if (state.title || !state.qflags) return;
+  if (state.qflags.chapter_two_done && !state.quests.ch3_case) startQuest('ch3_case');
+  // Marta is gone: the case is under her empty bunk
+  if (qActive('ch3_case') && !qf('ch3:marta') && npcGone('Marta Voss') && state.hearth && !state.dlg && Math.hypot(state.player.x - (state.hearth.x + 0.5) * TS, state.player.y - (state.hearth.y + 0.5) * TS) < 5 * TS) startDialogue('ch3_case_alone');
+  // Priya is gone: the radio goes quiet on its own
+  if (qActive('ch3_radio') && !qf('ch3:priya') && npcGone('Priya Nair')) { state.qflags.priya_quiet = true; questEvent('ch3:priya'); toast('Without Priya, nobody answers the broadcast. It goes on asking.', 5); }
+  // none of the ten live here: walking up to the table is enough
+  if (qActive('ch3_table') && state.quests.ch3_table.done.table && !qf('ch3:table') && !state.dlg && state.map === 'wastes' && !settlers.some(s => TEN.has(s.name))) {
+    const p = state.player, tx = Math.floor(p.x / TS), ty = Math.floor(p.y / TS);
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const st = structs.get((ty + dy) * W + tx + dx); if (st && st.type === 'table' && !state.dlg) { tableSeats(); startDialogue('ch3_table_seats'); } }
+  }
+  const h = clockHour();
+  // the Cantor on the radio, one sermon a night
+  const sn = state.qflags.sermons || 0;
+  if (state.quests.ch3_case && sn < 4 && state.map === 'wastes' && h >= 21 && !state.dlg && !state.raid && !anyMenuOpen() && state.qflags.sermon_day !== clockDay()) {
+    state.qflags.sermons = sn + 1; state.qflags.sermon_day = clockDay(); startDialogue('cantor_sermon_' + (sn + 1));
+  }
+  // the Listeners come after dark, at least six hours after Priya talks
+  if (qActive('ch3_listeners')) {
+    if (state.qflags.lst_start === undefined) state.qflags.lst_start = state.gameMinutes;
+    if (!qf('ch3:listeners') && !state.qflags.listener_raid && state.map === 'wastes' && state.hearth && !state.sleeping && !state.raid && !state.dlg && h >= 19 && h < 23 && state.gameMinutes - state.qflags.lst_start >= 360) {
+      if (repOf('listeners') >= 2 || (state.qflags.priya_quiet && repOf('listeners') >= 1)) { const fl = state.mapFlags.tidewrack = state.mapFlags.tidewrack || {}; fl.chapelOpen = true; startDialogue('ch3_listeners_peace'); }
+      else { state.qflags.listener_raid = true; state.qflags.listener_raid_pending = true; startRaid(clockDay()); }
+    }
+  }
+}; }
+Object.assign(DBG, { capacity, tableSeats, cantorFight, ch3: () => ({ q: ['ch3_case', 'ch3_radio', 'ch3_listeners', 'ch3_table'].map(id => id + ':' + (state.quests[id] ? state.quests[id].status : '-')).join(' ') }) });
 let last = performance.now();
 function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000);
